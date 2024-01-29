@@ -1,8 +1,6 @@
 "use client";
-import TransactionList from "@/components/transaction/transactionList";
 import { UserContext } from "@/layout/context/usercontext";
 import axios from "axios";
-import { Divider } from "primereact/divider";
 import { Toast } from "primereact/toast";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
@@ -54,23 +52,24 @@ export default function Enterprise() {
   }, []);
 
   return (
-    <div className="col-12 ">
-      <Toast ref={toast} />
-      <div className="card">
-        <div className="card-title mb-3">
-          <span className="text-900 text-xl font-semibold">
-            Dernieres Transactions
-          </span>
-        </div>
-        <Divider />
-        <div className="card-body">
-          <TransactionList
-            loading={loading}
-            rows={5}
-            transactions={transactions}
-          />
-        </div>
-      </div>
-    </div>
+    <div>Tableau de bord</div>
+    // <div className="col-12 ">
+    //   <Toast ref={toast} />
+    //   <div className="card">
+    //     <div className="card-title mb-3">
+    //       <span className="text-900 text-xl font-semibold">
+    //         Dernieres Transactions
+    //       </span>
+    //     </div>
+    //     <Divider />
+    //     <div className="card-body">
+    //       <TransactionList
+    //         loading={loading}
+    //         rows={5}
+    //         transactions={transactions}
+    //       />
+    //     </div>
+    //   </div>
+    // </div>
   );
 }
