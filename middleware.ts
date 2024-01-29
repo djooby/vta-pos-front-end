@@ -1,5 +1,5 @@
-import { NextResponse } from "next/server";
 import type { NextRequest } from "next/server";
+import { NextResponse } from "next/server";
 
 export function middleware(req: NextRequest) {
   const path = req.nextUrl.pathname;
@@ -20,24 +20,27 @@ export function middleware(req: NextRequest) {
   //! Home Page
   if (path === "/") {
     if (allowedToAdminOnly.includes(role)) {
-      return NextResponse.redirect(new URL("/dashboard", req.url));
+      return NextResponse.rewrite(new URL("/dashboard", req.url));
     } else if (role === "User") {
-      return NextResponse.redirect(
-        new URL("/enterprise/transfer/delivered", req.url)
-      );
+    } else {
+      return NextResponse.redirect(new URL("/auth/login", req.url));
     }
   }
 
   //! Dashboard Page
   if (path === "/dashboard" && !allowedToAdminOnly.includes(role)) {
-    if (role === "User") {
-      return NextResponse.redirect(
-        new URL("/enterprise/transfer/delivered", req.url)
-      );
-    }
+    return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 
+  //! Product Page
+  if (path.startsWith("/product") && !allowedToAdminOnly.includes(role)) {
+    return NextResponse.redirect(new URL("/auth/login", req.url));
+  }
 
+  //! Employee Page
+  if (path.startsWith("/employee") && !allowedToSuperAdminOnly.includes(role)) {
+    return NextResponse.redirect(new URL("/auth/login", req.url));
+  }
 }
 
 export const config = {
