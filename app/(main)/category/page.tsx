@@ -21,13 +21,12 @@ import React, {
   useState,
 } from "react";
 
-export default function Canceled() {
+export default function Categories() {
   const [categories, setCategories] = useState<Demo.Category[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<DataTableFilterMeta>({});
   const [globalFilterValue, setGlobalFilterValue] = useState("");
   const { layoutConfig } = useContext(LayoutContext);
-  const dt = useRef<DataTable<any>>(null);
 
   const [isDeleteDialog, setIsDeleteDialog] = useState(false);
   const [isNewDialog, setIsNewDialog] = useState(false);

@@ -42,7 +42,7 @@ const AppMenu = () => {
         {
           label: "Liste des produits",
           icon: "pi pi-fw pi-box",
-          to: "/product/overview/4343",
+          to: "/product",
           visible: role === "Super Admin" || role === "Admin" ? true : false,
         },
       ],
@@ -54,7 +54,7 @@ const AppMenu = () => {
       icon: "pi pi-th-large",
       items: [
         {
-          label: "Liste des categories",
+          label: "Liste des catégories",
           icon: "pi pi-fw pi-th-large",
           to: "/category",
           visible: role === "Super Admin" || role === "Admin" ? true : false,

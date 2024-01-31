@@ -41,6 +41,7 @@ export default function Profile() {
     category: "",
     cost: 0,
     quantity: 0,
+    status:"INSTOCK"
   };
 
   const [submitted, setSubmitted] = useState(false);
