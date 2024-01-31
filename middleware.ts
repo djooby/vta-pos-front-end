@@ -18,17 +18,7 @@ export function middleware(req: NextRequest) {
   }
 
   //! Home Page
-  if (path === "/") {
-    if (allowedToAdminOnly.includes(role)) {
-      return NextResponse.rewrite(new URL("/dashboard", req.url));
-    } else if (role === "User") {
-    } else {
-      return NextResponse.redirect(new URL("/auth/login", req.url));
-    }
-  }
-
-  //! Dashboard Page
-  if (path === "/dashboard" && !allowedToAdminOnly.includes(role)) {
+  if (path === "/" && !allowedToAdminOnly.includes(role)) {
     return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 

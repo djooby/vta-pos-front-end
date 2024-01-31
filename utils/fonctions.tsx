@@ -62,21 +62,7 @@ class Fonctions {
     return result;
   }
 
-  generateIdForTransfer() {
-    let date = new Date();
-    let id = this.generateRandomString(2);
-    let id3 = this.generateRandomString(2);
-    let id2 = this.generateRandomString(2);
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-    let year = date.getFullYear();
-
-    let code = day + id3 + "-" + id + id2;
-
-    return code;
-  }
-
-  generateIdForEnterprise() {
+  generateId() {
     let date = new Date();
     let id = this.generateRandomString(2);
     let id3 = this.generateRandomString(2);

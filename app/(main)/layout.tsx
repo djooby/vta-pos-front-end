@@ -5,8 +5,8 @@ interface MainLayoutProps {
 }
 
 export const metadata: Metadata = {
-  title: "Tableau de bord - Xbooks",
-  description: "Xbooks est l’outil idéal pour les business de transfert.",
+  title: "Tableau de bord - VTA",
+  description: "Dashboard of VTA.",
   robots: { index: false, follow: false },
   icons: {
     icon: "./../logo/icon-bg.jpg",

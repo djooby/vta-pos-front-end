@@ -23,7 +23,7 @@ const AppMenu = () => {
         {
           label: "Tableau de bord",
           icon: "pi pi-fw pi-chart-bar",
-          to: "/dashboard",
+          to: "/",
         },
       ],
     },
