@@ -1,4 +1,5 @@
 "use client";
+import { LayoutContext } from "@/layout/context/layoutcontext";
 import { UserContext } from "@/layout/context/usercontext";
 import fonctions from "@/utils/fonctions";
 import axios from "axios";
@@ -16,6 +17,9 @@ import { useCallback, useContext, useEffect, useRef, useState } from "react";
 export default function Profile() {
   const imgPlaceholder = "/product/placeholder.png";
   const [productImage, setproductImage] = useState(imgPlaceholder);
+  const { layoutConfig } = useContext(LayoutContext);
+
+  const { userInfo } = useContext(UserContext);
 
   const toast = useRef<Toast | null>(null);
   const toastMessage = (status: any, message: string) => {
@@ -56,8 +60,6 @@ export default function Profile() {
     setProduct(_product);
   };
 
-  const { userInfo } = useContext(UserContext);
-
   const [isActionDialogVisible, setIsActionDialogVisible] = useState(false);
   const [loadingAddCategory, setLoadingAddCategory] = useState(false);
 
@@ -78,7 +80,7 @@ export default function Profile() {
     };
 
     try {
-      await axios.post("/api/category/get", dataToApi).then((res) => {
+      await axios.post("/api/category/list", dataToApi).then((res) => {
         var result = res.data;
         if (result.status === "success") {
           setCategories(result.data);
@@ -93,67 +95,11 @@ export default function Profile() {
     }
   }, [userInfo.token]);
 
-  const saveCategory = async () => {
-    setSubmittedNewCategory(true);
-    if (category != "") {
-      const dataToApi = {
-        token: userInfo.token,
-        category_name: category,
-      };
-      setLoadingAddCategory(true);
-
-      try {
-        await axios.post("/api/category/add", dataToApi).then((res) => {
-          const result = res.data;
-          if (result.status == "success") {
-            toastMessage("success", result.data);
-
-            // show success message
-            getCategories();
-            setCategory("");
-            setSubmittedNewCategory(false);
-          } else {
-            // show error message
-            toastMessage("error", result.data);
-          }
-          setIsActionDialogVisible(false);
-          setLoadingAddCategory(false);
-        });
-      } catch (e) {
-        toastMessage(
-          "error",
-          "Une erreur est survenue lors de l'enregistrement de la catégorie."
-        );
-        console.log(e);
-      }
-    }
-  };
-
-  const actionDialogFooter = (
-    <>
-      <Button
-        label="Non"
-        icon="pi pi-times"
-        disabled={loadingAddCategory}
-        text
-        onClick={hideActionDialog}
-      />
-      <Button
-        label="Oui"
-        icon="pi pi-check"
-        loading={loadingAddCategory}
-        text
-        onClick={() => saveCategory()}
-      />
-    </>
-  );
 
   const saveProduct = async () => {
     setSubmitted(true);
-    console.log(product);
     if (
       product.code.trim() &&
-      product.brand.trim() &&
       product.category.trim() &&
       product.cost > 0 &&
       product.quantity > 0
@@ -190,8 +136,10 @@ export default function Profile() {
   };
 
   useEffect(() => {
-    getCategories();
-  }, [getCategories]);
+    if (userInfo) {
+      getCategories();
+    }
+  }, [getCategories, userInfo, layoutConfig]);
 
   return (
     <div className="card">
@@ -201,26 +149,13 @@ export default function Profile() {
           Ajouter nouvel article
         </span>
 
-        <Button
-          label="Nouvelle catégorie"
-          onClick={() => setIsActionDialogVisible(true)}
-          outlined
-        />
       </div>
 
       <Divider />
       <div className="grid">
-        <div className="col-12 lg:col-2">
-          <img
-            id="logo-img"
-            alt="logo"
-            src={productImage}
-            className="w-full md:mb-4"
-            style={{ cursor: "pointer" }}
-          />
-        </div>
+       
 
-        <div className="lg:col-10 col-12 align-items-center">
+        <div className="col-12 align-items-center">
           <div className="grid formgrid p-fluid">
             <div className="field mb-4 col-12 md:col-6">
               <label htmlFor="code" className="font-medium text-900">
@@ -243,20 +178,29 @@ export default function Profile() {
             </div>
 
             <div className="field mb-4 col-12 md:col-6">
-              <label htmlFor="brand" className="font-medium text-900">
-                Marque
+              <label htmlFor="expediteur" className="font-medium text-900">
+                Catégorie *
               </label>
-              <InputText
-                placeholder="Marque de l'article"
-                id="brand"
-                type="text"
+
+              <Dropdown
+                value={selectedCategory}
+                onChange={(e) => {
+                  setselectedCategory(e.value);
+                  onOtherInputChange(e.value.category_name, "category");
+                }}
+                options={categories}
+                optionLabel="category_name"
+                placeholder="Choisir catégorie"
+                filter
                 className={classNames({
-                  "p-invalid": submitted && !product.brand,
+                  "p-invalid": submitted && !product.category,
                 })}
-                onChange={(e) => onInputChange(e, "brand")}
               />
-              {submitted && !product.brand && (
-                <small className="p-invalid">La marque est obligatoire.</small>
+
+              {submitted && !product.category && (
+                <small className="p-invalid">
+                  La catégorie de l&apos;article est obligatoire.
+                </small>
               )}
             </div>
 
@@ -303,30 +247,15 @@ export default function Profile() {
             </div>
 
             <div className="field mb-4 col-12 md:col-4">
-              <label htmlFor="expediteur" className="font-medium text-900">
-                Catégorie *
+              <label htmlFor="brand" className="font-medium text-900">
+                Marque
               </label>
-
-              <Dropdown
-                value={selectedCategory}
-                onChange={(e) => {
-                  setselectedCategory(e.value);
-                  onOtherInputChange(e.value.category_name, "category");
-                }}
-                options={categories}
-                optionLabel="category_name"
-                placeholder="Choisir catégorie"
-                filter
-                className={classNames({
-                  "p-invalid": submitted && !product.category,
-                })}
+              <InputText
+                placeholder="Marque de l'article"
+                id="brand"
+                type="text"
+                onChange={(e) => onInputChange(e, "brand")}
               />
-
-              {submitted && !product.category && (
-                <small className="p-invalid">
-                  La catégorie de l&apos;article est obligatoire.
-                </small>
-              )}
             </div>
 
             <div className="col-12">
@@ -338,40 +267,7 @@ export default function Profile() {
                 onClick={() => saveProduct()}
               />
             </div>
-            <Dialog
-              visible={isActionDialogVisible}
-              header="Ajouter Categorie"
-              modal
-              style={{ width: "450px" }}
-              footer={actionDialogFooter}
-              onHide={hideActionDialog}
-            >
-              <div className="grid formgrid p-fluid mt-2">
-                <div className="field mb-4 col-12">
-                  <label
-                    htmlFor="category_name"
-                    className="font-medium text-900"
-                  >
-                    Nom catégorie
-                  </label>
-                  <InputText
-                    placeholder="Le nom de la catégorie"
-                    id="category_name"
-                    type="text"
-                    value={category}
-                    className={classNames({
-                      "p-invalid": submittedNewCategory && !category,
-                    })}
-                    onChange={(e) => setCategory(e.target.value)}
-                  />
-                  {submittedNewCategory && !category && (
-                    <small className="p-invalid">
-                      Le nom de la catégorie est obligatoire.
-                    </small>
-                  )}
-                </div>
-              </div>
-            </Dialog>
+           
           </div>
         </div>
       </div>

@@ -1,11 +1,7 @@
 "use client";
-import type {
-  ChildContainerProps,
-  UserContextProps,
-  User,
-} from "@/types";
+import type { ChildContainerProps, User, UserContextProps } from "@/types";
+import { destroyCookie, parseCookies, setCookie } from "nookies";
 import React, { useState } from "react";
-import { parseCookies, setCookie, destroyCookie } from "nookies";
 
 export const UserContext = React.createContext({} as UserContextProps);
 

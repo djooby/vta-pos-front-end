@@ -5,7 +5,6 @@ import type { Page } from "@/types";
 import fonctions from "@/utils/fonctions";
 import { GoogleLogin } from "@react-oauth/google";
 import axios from "axios";
-import Link from "next/link";
 import { useRouter } from "next/navigation";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
@@ -100,29 +99,34 @@ const Login: Page = () => {
 
           // * save User
           var isSaved = saveUser(userTosave);
-          // ? save Enterprise
           if (isSaved) {
+            setUserInfo(userTosave);
+
             // ? redirect to enterprise: home
             toastMessage("success", "Vous vous êtes connecté.");
 
             router.push("/");
           } else {
+            setLoading(false);
+
             //! show error
             toastMessage("error", "Une erreur est survenue. code SU-Log.");
           }
         } else {
           // ! Auth Failed
           toastMessage("error", data.data);
+          setLoading(false);
         }
       });
     } catch (e) {
+      setLoading(false);
+
       toastMessage(
         "error",
         "Erreur serveur, veuillez reessayer ulterieurement."
       );
       console.log(e);
     }
-    setLoading(false);
   };
   return (
     <>
@@ -212,16 +216,6 @@ const Login: Page = () => {
               type="submit"
               loading={loading}
             ></Button>
-
-            <span className="font-medium text-600 mt-1">
-              Pas de compte ?{" "}
-              <Link
-                href="/auth/register"
-                className="font-semibold cursor-pointer text-900 hover:text-primary transition-colors transition-duration-300"
-              >
-                Créez-en un.
-              </Link>
-            </span>
           </form>
           <Divider>
             <span className="text-600 font-medium">OU</span>

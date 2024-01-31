@@ -171,35 +171,23 @@ declare namespace Demo {
     createdAt: number;
   }
 
-  type Transfert = {
-    id_transfert: string;
-    id_entreprise: string;
-    numero_transfert: string;
-    montant: string;
-    frais: string;
-    via: string;
-    compte: string;
-    expediteur: string;
-    destinataire: string;
-    numero_confirmation: "";
-    note: "";
+  type Category = {
+    id_category: string;
+    category_name: string;
     cree_par: string;
     date: string;
-    statut: string;
   };
 
   //ProductService
   type Product = {
-    id?: string;
+    id_product?: string;
     code?: string;
-    name: string;
-    description: string;
+    brand: string;
     image?: string;
-    price?: number | string;
+    cost?: number | string;
     category?: string;
-    quantity?: number;
-    inventoryStatus?: InventoryStatus;
-    rating?: number;
+    quantity?: number | string;
+    status?: InventoryStatus;
     orders?: ProductOrder[];
     [key: string]:
       | string
@@ -213,8 +201,8 @@ declare namespace Demo {
   };
 
   type ProductOrder = {
-    id?: string;
-    productCode?: string;
+    id_product_order?: string;
+    id_product?: string;
     date?: string;
     amount?: number;
     quantity?: number;

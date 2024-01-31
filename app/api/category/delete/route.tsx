@@ -9,15 +9,15 @@ export async function POST(req: Request) {
   //? get body data
   const body = await req.json();
   const token = body.token;
-  const product = body.product;
-  const query = await fetch(`${apiUrl}product/add_product`, {
+  const id_category = body.id_category;
+  const query = await fetch(`${apiUrl}category/delete_category`, {
     headers: {
       "X-Api-Key": apiKey,
       Authorization: token,
     },
     cache: "no-store",
     method: "POST",
-    body: JSON.stringify({ product: product }),
+    body: JSON.stringify({ id_category: id_category }),
   });
 
   const response = await query.json();

@@ -9,7 +9,7 @@ export async function POST(req: Request) {
   //? get body data
   const body = await req.json();
   const token = body.token;
-  const category_name = body.category_name;
+  const category = body.category;
   const query = await fetch(`${apiUrl}category/add_category`, {
     headers: {
       "X-Api-Key": apiKey,
@@ -17,7 +17,7 @@ export async function POST(req: Request) {
     },
     cache: "no-store",
     method: "POST",
-    body: JSON.stringify({ category_name: category_name }),
+    body: JSON.stringify({ category: category }),
   });
 
   const response = await query.json();
