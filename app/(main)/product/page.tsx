@@ -313,13 +313,25 @@ export default function Products() {
   };
 
   const statusBodyTemplate = (rowData: Demo.Product) => {
+    var statusList = ["INSTOCK", "LOWSTOCK", "OUTOFSTOCK"];
+
+    var qte = rowData.quantity && rowData.quantity?.toString();
+    var alerte = rowData.alert_quantity && rowData.alert_quantity?.toString();
+    var status = "INSTOCK";
+
+    if (qte !== 0 && qte != undefined && alerte != 0 && alerte != undefined) {
+      if (parseInt(qte) > 0 && parseInt(qte) <= parseInt(alerte)) {
+        status = "LOWSTOCK";
+      } else if (parseInt(qte) === 0) {
+        status = "OUTOFSTOCK";
+      }
+    }
+
     return (
       <>
         <span className="p-column-title">Status</span>
-        <span
-          className={`product-badge status-${rowData.status?.toLowerCase()}`}
-        >
-          {rowData.status}
+        <span className={`product-badge status-${status?.toLowerCase()}`}>
+          {status}
         </span>
       </>
     );
