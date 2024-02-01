@@ -181,14 +181,16 @@ declare namespace Demo {
   //ProductService
   type Product = {
     id_product?: string;
-    code?: string;
-    brand: string;
-    image?: string;
-    cost?: number | string;
-    category?: string;
-    quantity?: number | string;
-    alert_quantity?: number | string;
+    code: string;
+    category: string;
+    color: string;
+    size: string;
+    type: string;
+    cost: number;
+    quantity: number;
+    alert_quantity: number;
     created_by?: string;
+    image?: string;
     status?: InventoryStatus;
     attribute?: Attribute[];
     orders?: ProductOrder[];

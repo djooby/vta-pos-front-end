@@ -47,11 +47,14 @@ export default function Products() {
   const router = useRouter();
 
   let emptyProduct = {
-    id_product: "",
-    code: "",
-    product: "",
-    brand: "",
-    image: "",
+    code: fonctions.generateRandomString(10),
+    category: "",
+    color: "",
+    size: "",
+    type: "",
+    cost: 0,
+    quantity: 0,
+    alert_quantity: 0,
     created_by: userInfo.fullname,
     date: fonctions.getCurrentDate(),
   };
@@ -287,7 +290,7 @@ export default function Products() {
           src={rowData.image}
           alt={rowData.image}
           className="shadow-2"
-          width="100"
+          width="50"
         />
       </>
     ) : (
@@ -297,7 +300,7 @@ export default function Products() {
           src={`/product/placeholder.png`}
           alt={rowData.image}
           className="shadow-2"
-          width="100"
+          width="50"
         />
       </>
     );
@@ -313,8 +316,6 @@ export default function Products() {
   };
 
   const statusBodyTemplate = (rowData: Demo.Product) => {
-    var statusList = ["INSTOCK", "LOWSTOCK", "OUTOFSTOCK"];
-
     var qte = rowData.quantity && rowData.quantity?.toString();
     var alerte = rowData.alert_quantity && rowData.alert_quantity?.toString();
     var status = "INSTOCK";
@@ -477,8 +478,6 @@ export default function Products() {
 
         <DataTable
           value={products}
-          expandedRows={expandedRows}
-          onRowToggle={(e) => setExpandedRows(e.data)}
           rowExpansionTemplate={rowExpansionTemplate}
           loading={loading}
           dataKey="id_product"
@@ -490,13 +489,13 @@ export default function Products() {
           globalFilter={globalFilterValue}
           filters={filters}
         >
-          <Column expander style={{ width: "3em" }} />
+          {/* <Column expander style={{ width: "3em" }} /> */}
           <Column field="cost" header="Image" body={imageBodyTemplate} />
-          <Column field="code" header="Code" sortable />
           <Column field="category" header="Catégorie" sortable />
-          <Column field="brand" header="Marque" sortable />
-          <Column field="quantity" header="Quantité" sortable />
-          <Column field="alert_quantity" header="Alerte Stock" sortable />
+          <Column field="color" header="Couleur" sortable />
+          <Column field="size" header="Taille" sortable />
+          <Column field="type" header="Type" sortable />
+          <Column field="quantity" header="Qté" sortable />
           <Column
             field="cost"
             header="Prix d'achat"

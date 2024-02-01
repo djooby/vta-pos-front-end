@@ -1,6 +1,7 @@
 "use client";
 import { LayoutContext } from "@/layout/context/layoutcontext";
 import { UserContext } from "@/layout/context/usercontext";
+import { Demo } from "@/types";
 import fonctions from "@/utils/fonctions";
 import axios from "axios";
 import { useRouter } from "next/navigation";
@@ -34,19 +35,54 @@ export default function Profile() {
 
   let emptyProduct = {
     code: fonctions.generateRandomString(10),
-    brand: "",
     category: "",
+    color: "",
+    size: "",
+    type: "",
     cost: 0,
     quantity: 0,
     alert_quantity: 0,
     created_by: userInfo.fullname,
-    status: "INSTOCK",
     date: fonctions.getCurrentDate(),
   };
 
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
-  const [product, setProduct] = useState(emptyProduct);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+  const [product, setProduct] = useState<Demo.Product>(emptyProduct);
+
+  const colors = [
+    "Non définie",
+    "Abricot",
+    "Argent",
+    "Beige",
+    "Blanc",
+    "Bleu",
+    "Citron vert",
+    "Crème",
+    "Cuivre",
+    "Cyan",
+    "Gris",
+    "Indigo",
+    "Jaune",
+    "Kaki",
+    "Magenta",
+    "Mauve",
+    "Noir",
+    "Olive",
+    "Orange",
+    "Or",
+    "Rose",
+    "Rouge",
+    "Saumon",
+    "Turquoise",
+    "Vert",
+    "Violet",
+  ];
+
+  const sizeShirt = ["Youth", "XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+  const sizeCup = ["11 oz", "13 oz", "15 oz"];
+  const sizeTumbler = ["18 oz", "20 oz", "30 oz", "15 oz"];
 
   const onInputChange = (e: any, name: any) => {
     const val = (e.target && e.target.value) || "";
@@ -61,7 +97,9 @@ export default function Profile() {
     setProduct(_product);
   };
 
-  const [selectedCategory, setselectedCategory] = useState(null);
+  const [selectedCategory, setselectedCategory] = useState<Demo.Category>();
+  const [selectedSize, setSelectedSize] = useState();
+  const [selectedColor, setSelectedColor] = useState();
 
   const [categories, setCategories] = useState([]);
 
@@ -75,6 +113,9 @@ export default function Profile() {
         var result = res.data;
         if (result.status === "success") {
           setCategories(result.data);
+          setLoadingCategories(false);
+        } else {
+          toastMessage("error", result.data);
         }
       });
     } catch (e) {
@@ -125,6 +166,22 @@ export default function Profile() {
     }
   };
 
+  // Options en fonction de la catégorie sélectionnée
+  let sizeOptions: string[] = [];
+  if (
+    selectedCategory?.category_name === "Maillot à col" ||
+    selectedCategory?.category_name === "T-Shirt" ||
+    selectedCategory?.category_name === "Maillot"
+  ) {
+    sizeOptions = sizeShirt;
+  } else if (selectedCategory?.category_name === "Tasse") {
+    sizeOptions = sizeCup;
+  } else if (selectedCategory?.category_name === "Tumbler") {
+    sizeOptions = sizeTumbler;
+  } else {
+    sizeOptions = ["Non définie"];
+  }
+
   useEffect(() => {
     if (userInfo) {
       getCategories();
@@ -144,27 +201,7 @@ export default function Profile() {
       <div className="grid">
         <div className="col-12 align-items-center">
           <div className="grid formgrid p-fluid">
-            <div className="field mb-4 col-12 md:col-4">
-              <label htmlFor="code" className="font-medium text-900">
-                Code *
-              </label>
-              <InputText
-                placeholder="Code de l'article"
-                id="code"
-                type="text"
-                value={product.code}
-                disabled
-                className={classNames({
-                  "p-invalid": submitted && !product.code,
-                })}
-                onChange={(e) => onInputChange(e, "code")}
-              />
-              {submitted && !product.code && (
-                <small className="p-invalid">Le code est obligatoire.</small>
-              )}
-            </div>
-
-            <div className="field mb-4 col-12 md:col-4">
+            <div className="field mb-4 col-12 md:col-3">
               <label htmlFor="expediteur" className="font-medium text-900">
                 Catégorie *
               </label>
@@ -178,6 +215,7 @@ export default function Profile() {
                 options={categories}
                 optionLabel="category_name"
                 placeholder="Choisir catégorie"
+                disabled={loadingCategories}
                 filter
                 className={classNames({
                   "p-invalid": submitted && !product.category,
@@ -189,9 +227,69 @@ export default function Profile() {
                   La catégorie de l&apos;article est obligatoire.
                 </small>
               )}
+
+              {loadingCategories && (
+                <small className="p-invalid">
+                  <i className="pi pi-spinner pi-spin"></i> Chargement des
+                  catégories...
+                </small>
+              )}
             </div>
 
-            <div className="field mb-4 col-12 md:col-4">
+            <div className="field mb-4 col-12 md:col-3">
+              <label htmlFor="size" className="font-medium text-900">
+                Taille *
+              </label>
+
+              <Dropdown
+                value={selectedSize}
+                onChange={(e) => {
+                  setSelectedSize(e.value);
+                  onOtherInputChange(e.value, "size");
+                }}
+                options={sizeOptions}
+                placeholder="Choisir la Taille"
+                filter
+                className={classNames({
+                  "p-invalid": submitted && !product.size,
+                })}
+              />
+
+              {submitted && !product.size && (
+                <small className="p-invalid">
+                  La taille de l&apos;article est obligatoire.
+                </small>
+              )}
+            </div>
+
+            <div className="field mb-4 col-12 md:col-3">
+              <label htmlFor="color" className="font-medium text-900">
+                Couleur *
+              </label>
+
+              <Dropdown
+                id="color"
+                value={selectedColor}
+                onChange={(e) => {
+                  setSelectedColor(e.value);
+                  onOtherInputChange(e.value, "color");
+                }}
+                options={colors}
+                placeholder="Choisir la couleur"
+                filter
+                className={classNames({
+                  "p-invalid": submitted && !product.color,
+                })}
+              />
+
+              {submitted && !product.color && (
+                <small className="p-invalid">
+                  La couleur de l&apos;article est obligatoire.
+                </small>
+              )}
+            </div>
+
+            <div className="field mb-4 col-12 md:col-3">
               <label htmlFor="cost" className="font-medium text-900">
                 Prix d&apos;achat *
               </label>
@@ -255,14 +353,14 @@ export default function Profile() {
             </div>
 
             <div className="field mb-4 col-12 md:col-4">
-              <label htmlFor="brand" className="font-medium text-900">
-                Marque
+              <label htmlFor="type" className="font-medium text-900">
+                Type
               </label>
               <InputText
-                placeholder="Marque de l'article"
-                id="brand"
+                placeholder="Type de l'article"
+                id="type"
                 type="text"
-                onChange={(e) => onInputChange(e, "brand")}
+                onChange={(e) => onInputChange(e, "type")}
               />
             </div>
 
