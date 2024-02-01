@@ -5,7 +5,6 @@ import fonctions from "@/utils/fonctions";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Button } from "primereact/button";
-import { Dialog } from "primereact/dialog";
 import { Divider } from "primereact/divider";
 import { Dropdown } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
@@ -15,8 +14,6 @@ import { classNames } from "primereact/utils";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 export default function Profile() {
-  const imgPlaceholder = "/product/placeholder.png";
-  const [productImage, setproductImage] = useState(imgPlaceholder);
   const { layoutConfig } = useContext(LayoutContext);
 
   const { userInfo } = useContext(UserContext);
@@ -41,7 +38,10 @@ export default function Profile() {
     category: "",
     cost: 0,
     quantity: 0,
-    status:"INSTOCK"
+    alert_quantity: 0,
+    created_by: userInfo.fullname,
+    status: "INSTOCK",
+    date: fonctions.getCurrentDate(),
   };
 
   const [submitted, setSubmitted] = useState(false);
@@ -61,17 +61,7 @@ export default function Profile() {
     setProduct(_product);
   };
 
-  const [isActionDialogVisible, setIsActionDialogVisible] = useState(false);
-  const [loadingAddCategory, setLoadingAddCategory] = useState(false);
-
   const [selectedCategory, setselectedCategory] = useState(null);
-
-  const hideActionDialog = () => {
-    setIsActionDialogVisible(false);
-  };
-
-  const [category, setCategory] = useState<string>();
-  const [submittedNewCategory, setSubmittedNewCategory] = useState(false);
 
   const [categories, setCategories] = useState([]);
 
@@ -96,7 +86,6 @@ export default function Profile() {
     }
   }, [userInfo.token]);
 
-
   const saveProduct = async () => {
     setSubmitted(true);
     if (
@@ -118,7 +107,7 @@ export default function Profile() {
           if (result.status === "success") {
             // redirect to product overview
             toastMessage("success", "L'article a été enregistré avec succès.");
-            router.push("/product/overview/" + product.code);
+            router.push("/product");
           } else {
             toastMessage("error", result.data);
             setLoading(false);
@@ -149,16 +138,13 @@ export default function Profile() {
         <span className="text-900 text-xl font-semibold">
           Ajouter nouvel article
         </span>
-
       </div>
 
       <Divider />
       <div className="grid">
-       
-
         <div className="col-12 align-items-center">
           <div className="grid formgrid p-fluid">
-            <div className="field mb-4 col-12 md:col-6">
+            <div className="field mb-4 col-12 md:col-4">
               <label htmlFor="code" className="font-medium text-900">
                 Code *
               </label>
@@ -178,7 +164,7 @@ export default function Profile() {
               )}
             </div>
 
-            <div className="field mb-4 col-12 md:col-6">
+            <div className="field mb-4 col-12 md:col-4">
               <label htmlFor="expediteur" className="font-medium text-900">
                 Catégorie *
               </label>
@@ -206,6 +192,27 @@ export default function Profile() {
             </div>
 
             <div className="field mb-4 col-12 md:col-4">
+              <label htmlFor="cost" className="font-medium text-900">
+                Prix d&apos;achat *
+              </label>
+              <InputNumber
+                placeholder="Prix d'achat de l'article"
+                id="cost"
+                type="text"
+                className={classNames({
+                  "p-invalid": submitted && !product.cost,
+                })}
+                onChange={(e) => onOtherInputChange(e.value, "cost")}
+                max={150000}
+              />
+              {submitted && !product.cost && (
+                <small className="p-invalid">
+                  Le prix d&apos;achat est obligatoire.
+                </small>
+              )}
+            </div>
+
+            <div className="field mb-4 col-12 md:col-4">
               <label htmlFor="quantity" className="font-medium text-900">
                 Quantité *
               </label>
@@ -227,22 +234,22 @@ export default function Profile() {
             </div>
 
             <div className="field mb-4 col-12 md:col-4">
-              <label htmlFor="cost" className="font-medium text-900">
-                Prix d&apos;achat *
+              <label htmlFor="alert_quantity" className="font-medium text-900">
+                Alerte quantité *
               </label>
               <InputNumber
-                placeholder="Prix d'achat de l'article"
-                id="cost"
+                placeholder="Le nombre d'unités de l'article"
+                id="quantity"
                 type="text"
                 className={classNames({
-                  "p-invalid": submitted && !product.cost,
+                  "p-invalid": submitted && !product.alert_quantity,
                 })}
-                onChange={(e) => onOtherInputChange(e.value, "cost")}
-                max={150000}
+                onChange={(e) => onOtherInputChange(e.value, "alert_quantity")}
+                max={1500}
               />
-              {submitted && !product.cost && (
+              {submitted && !product.alert_quantity && (
                 <small className="p-invalid">
-                  Le prix d&apos;achat est obligatoire.
+                  L&apos;alerte de quantité est obligatoire.
                 </small>
               )}
             </div>
@@ -268,7 +275,6 @@ export default function Profile() {
                 onClick={() => saveProduct()}
               />
             </div>
-           
           </div>
         </div>
       </div>

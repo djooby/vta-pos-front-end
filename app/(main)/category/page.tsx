@@ -41,7 +41,7 @@ export default function Categories() {
   let emptyCategory = {
     id_category: "",
     category_name: "",
-    cree_par: userInfo.fullname,
+    created_by: userInfo.fullname,
     date: fonctions.getCurrentDate(),
   };
 
@@ -320,7 +320,7 @@ export default function Categories() {
 
         <DataTable
           loading={loading}
-          dataKey="id_transaction"
+          dataKey="id_category"
           paginator
           rows={10}
           className="datatable-responsive"
@@ -330,7 +330,7 @@ export default function Categories() {
           globalFilter={globalFilterValue}
           filters={filters}
         >
-          <Column field="cree_par" header="Créé par" sortable />
+          <Column field="created_by" header="Créé par" sortable />
 
           <Column field="category_name" header="Nom" sortable />
           <Column field="date" header="Date" sortable />

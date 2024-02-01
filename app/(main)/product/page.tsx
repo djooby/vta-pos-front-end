@@ -8,11 +8,17 @@ import { useRouter } from "next/navigation";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
-import { DataTable, DataTableFilterMeta } from "primereact/datatable";
+import {
+  DataTable,
+  DataTableExpandedRows,
+  DataTableFilterMeta,
+} from "primereact/datatable";
 import { Dialog } from "primereact/dialog";
+import { Dropdown } from "primereact/dropdown";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import { Tooltip } from "primereact/tooltip";
+import { classNames } from "primereact/utils";
 import React, {
   useCallback,
   useContext,
@@ -22,6 +28,9 @@ import React, {
 } from "react";
 
 export default function Products() {
+  const [expandedRows, setExpandedRows] = useState<
+    any[] | DataTableExpandedRows
+  >([]);
   const [products, setProducts] = useState<Demo.Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<DataTableFilterMeta>({});
@@ -31,7 +40,7 @@ export default function Products() {
   const [isDeleteDialog, setIsDeleteDialog] = useState(false);
 
   const [loadingDelete, setLoadingDelete] = useState(false);
-  const [loadingNew, setLoadingNew] = useState(false);
+  const [loadingAttribute, setLoadingAttribute] = useState(false);
 
   const { userInfo } = useContext(UserContext);
 
@@ -43,17 +52,31 @@ export default function Products() {
     product: "",
     brand: "",
     image: "",
-    cree_par: userInfo.fullname,
+    created_by: userInfo.fullname,
     date: fonctions.getCurrentDate(),
   };
 
+  let emptyAttribute = {
+    id_product_attribute: "",
+    id_product: "",
+    attribute_name: "",
+    attribute_value: "",
+  };
+
+  const attributeTypeList = ["Couleur", "Taille", "Type", "Poids"];
+  const [selectedAttributeList, setSelectedAttributeList] = useState(null);
+
+  const [submitted, setSubmitted] = useState(false);
+
   const [product, setProduct] = useState<Demo.Product>(emptyProduct);
+
+  const [attribute, setAttribute] = useState<Demo.Attribute>(emptyAttribute);
 
   const OnInputChange = (e: any, name: any) => {
     const val = (e.target && e.target.value) || "";
-    let _product: any = { ...product };
-    _product[`${name}`] = val;
-    setProduct(_product);
+    let _attribute: any = { ...attribute };
+    _attribute[`${name}`] = val;
+    setAttribute(_attribute);
   };
 
   const onGlobalFilterChange: React.ChangeEventHandler<HTMLInputElement> = (
@@ -109,7 +132,7 @@ export default function Products() {
     });
   };
 
-  const getCategories = useCallback(async () => {
+  const getProducts = useCallback(async () => {
     const dataToapi = {
       token: userInfo.token,
     };
@@ -134,22 +157,22 @@ export default function Products() {
     setLoading(false);
   }, [userInfo.token]);
 
-  const confirmDeleteCategory = (rowData: any) => {
+  const confirmDelete = (rowData: any) => {
     setProduct(rowData);
     setIsDeleteDialog(true);
   };
 
-  const hideDeleteCategoryDialog = () => {
+  const hideDeleteDialog = () => {
     setIsDeleteDialog(false);
   };
 
-  const deleteCategory = async () => {
+  const deleteProduct = async () => {
     setLoadingDelete(true);
 
     // ? processus de suppression
     const dataToApi = {
       token: userInfo.token,
-      id_category: product.id_category,
+      id_product: product.id_product,
     };
 
     try {
@@ -157,7 +180,7 @@ export default function Products() {
         const result = res.data;
         if (result.status === "success") {
           toastMessage("success", result.data);
-          getCategories();
+          getProducts();
         } else {
           toastMessage("error", result.data);
         }
@@ -166,7 +189,7 @@ export default function Products() {
       console.log("Erreur delete product: ", e);
       toastMessage(
         "error",
-        "Une erreur est survenue lors de la suppression de la catégorie."
+        "Une erreur est survenue lors de la suppression de l'article."
       );
     }
 
@@ -185,7 +208,51 @@ export default function Products() {
           type="button"
           tooltip="Supprimer"
           tooltipOptions={{ position: "top" }}
-          onClick={() => confirmDeleteCategory(rowData)}
+          onClick={() => confirmDelete(rowData)}
+        />
+      </>
+    );
+  };
+
+  const deleteAttribute = async (id_product_attribute: any) => {
+    setLoadingAttribute(true);
+
+    const dataToApi = {
+      token: userInfo.token,
+      id_product_attribute: id_product_attribute,
+    };
+    try {
+      await axios.post("/api/attribute/delete", dataToApi).then((res) => {
+        const result = res.data;
+        if (result.status === "success") {
+          toastMessage("success", result.data);
+          getProducts();
+        } else {
+          toastMessage("error", result.data);
+        }
+      });
+    } catch (e) {
+      console.log("Erreur delete attribute: ", e);
+      toastMessage(
+        "error",
+        "Une erreur est survenue lors de la suppression de l'attribut."
+      );
+    }
+    setLoadingAttribute(false);
+  };
+
+  const actionAttributeTemplate = (rowData: any) => {
+    return (
+      <>
+        <Button
+          icon="pi pi-trash"
+          severity="danger"
+          rounded
+          className="mb-2"
+          type="button"
+          tooltip="Supprimer"
+          tooltipOptions={{ position: "top" }}
+          onClick={() => deleteAttribute(rowData.id_product_attribute)}
         />
       </>
     );
@@ -200,14 +267,14 @@ export default function Products() {
         severity="secondary"
         className="p-button-text"
         text
-        onClick={hideDeleteCategoryDialog}
+        onClick={hideDeleteDialog}
       />
       <Button
         label="Oui"
         icon="pi pi-check"
         text
         loading={loadingDelete}
-        onClick={() => deleteCategory()}
+        onClick={() => deleteProduct()}
       />
     </>
   );
@@ -258,12 +325,110 @@ export default function Products() {
     );
   };
 
+  const rowExpansionTemplate = (data: Demo.Product) => {
+    return (
+      <div className="orders-subtable">
+        <div className="flex flex-columnp align-items-center justify-content-start">
+          <h5>Attributs de: {data.category}</h5>
+          <Button
+            icon="pi pi-plus"
+            severity="success"
+            rounded
+            className="mb-2 ml-3"
+            type="button"
+            tooltip="Ajouter attribut"
+            tooltipOptions={{ position: "top" }}
+            onClick={() => addAttribute(data.id_product)}
+          />
+        </div>
+        <DataTable
+          style={{ maxWidth: "400px" }}
+          value={data.attribute}
+          responsiveLayout="scroll"
+          loading={loadingAttribute}
+        >
+          <Column field="attribute_name" header="Attribut" sortable></Column>
+          <Column field="attribute_value" header="Valeur" sortable></Column>
+          <Column
+            field=""
+            header="Action"
+            body={actionAttributeTemplate}
+          ></Column>
+        </DataTable>
+      </div>
+    );
+  };
+
+  const [isNewDialogAttribute, setIsNewDialogAttribute] = useState(false);
+
+  const addAttribute = (id_product: any) => {
+    setIsNewDialogAttribute(true);
+    attribute.id_product = id_product;
+  };
+
+  const newDialogAttributeFooter = (
+    <>
+      <Button
+        loading={loadingAttribute}
+        label="Non"
+        icon="pi pi-times"
+        severity="secondary"
+        className="p-button-text"
+        text
+        onClick={() => onHideNewDialog()}
+      />
+      <Button
+        label="Oui"
+        icon="pi pi-check"
+        text
+        loading={loadingAttribute}
+        onClick={() => saveAttribute()}
+      />
+    </>
+  );
+
+  const onHideNewDialog = () => {
+    setIsNewDialogAttribute(false);
+  };
+
+  const saveAttribute = async () => {
+    setSubmitted(true);
+    setLoadingAttribute(true);
+
+    if (attribute.attribute_name?.trim() && attribute.attribute_value?.trim()) {
+      const dataToApi = {
+        token: userInfo.token,
+        product_attribute: attribute,
+      };
+      try {
+        await axios.post("/api/attribute/add", dataToApi).then((res) => {
+          const result = res.data;
+          if (result.status === "success") {
+            setIsNewDialogAttribute(false);
+            toastMessage("success", result.data);
+            getProducts();
+          } else {
+            toastMessage("error", result.data);
+          }
+        });
+      } catch (e) {
+        console.log("Erreur save attribute: ", e);
+        toastMessage(
+          "error",
+          "Une erreur est survenue lors de la sauvegarde de l'attribut."
+        );
+      }
+      setSubmitted(false);
+    }
+    setLoadingAttribute(false);
+  };
+
   useEffect(() => {
     if (userInfo) {
-      getCategories();
+      getProducts();
     }
     initFilters();
-  }, [getCategories, layoutConfig, userInfo]);
+  }, [getProducts, layoutConfig, userInfo]);
 
   return (
     <div className="col-12">
@@ -289,7 +454,7 @@ export default function Products() {
             <Tooltip target=".export-target-button" />
             <Button
               icon="pi pi-plus"
-              className="mx-3 export-target-button"
+              className="md:mx-3 mx-1 export-target-button"
               rounded
               data-pr-tooltip="Nouvel article"
               data-pr-position="top"
@@ -299,24 +464,27 @@ export default function Products() {
         </div>
 
         <DataTable
+          value={products}
+          expandedRows={expandedRows}
+          onRowToggle={(e) => setExpandedRows(e.data)}
+          rowExpansionTemplate={rowExpansionTemplate}
           loading={loading}
-          dataKey="id_transaction"
+          dataKey="id_product"
           paginator
           rows={10}
           className="datatable-responsive"
-          value={products}
           emptyMessage="Aucun résultat."
           responsiveLayout="scroll"
           globalFilter={globalFilterValue}
           filters={filters}
         >
+          <Column expander style={{ width: "3em" }} />
           <Column field="cost" header="Image" body={imageBodyTemplate} />
           <Column field="code" header="Code" sortable />
           <Column field="category" header="Catégorie" sortable />
           <Column field="brand" header="Marque" sortable />
           <Column field="quantity" header="Quantité" sortable />
           <Column field="alert_quantity" header="Alerte Stock" sortable />
-          <Column field="attribut" header="Attribut" />
           <Column
             field="cost"
             header="Prix d'achat"
@@ -329,7 +497,7 @@ export default function Products() {
             body={statusBodyTemplate}
             sortable
           />
-          <Column field="cree_par" header="Créé par" sortable />
+          <Column field="created_by" header="Créé par" sortable />
           <Column field="date" header="Date" sortable />
           <Column
             header="Action"
@@ -350,7 +518,7 @@ export default function Products() {
         header="Confirmation"
         modal
         footer={deleteDialogFooter}
-        onHide={hideDeleteCategoryDialog}
+        onHide={hideDeleteDialog}
       >
         <div className="flex align-items-center justify-content-center">
           <i
@@ -360,9 +528,67 @@ export default function Products() {
           {product && (
             <span>
               Êtes-vous sûr(e) de vouloir supprimer cet article:
-              <b>{" " + product.category + " "}</b>
+              <b>{" " + product.code + " "}</b>
             </span>
           )}
+        </div>
+      </Dialog>
+
+      {/* Modal New Attribute */}
+      <Dialog
+        visible={isNewDialogAttribute}
+        style={{ width: "450px" }}
+        header="Nouvel attribut"
+        modal
+        footer={newDialogAttributeFooter}
+        onHide={onHideNewDialog}
+      >
+        <div className="grid formgrid mt-5 p-fluid">
+          <div className="field mb-4 col-12">
+            <label htmlFor="compte" className="font-medium text-900">
+              Nom Attribut *
+            </label>
+            <Dropdown
+              id="compte"
+              options={attributeTypeList}
+              value={attribute.attribute_name}
+              onChange={(e) => {
+                setSelectedAttributeList(e.value);
+                attribute.attribute_name = e.value;
+              }}
+              placeholder="attribut"
+              itemTemplate={(option) => {
+                return option;
+              }}
+              className={classNames({
+                "p-invalid": submitted && !selectedAttributeList,
+              })}
+            />
+            {submitted && !selectedAttributeList && (
+              <small className="p-invalid">
+                Veuillez choisir l&apos;attribut.
+              </small>
+            )}
+          </div>
+
+          <div className="field mb-4 col-12">
+            <label htmlFor="attribute_value" className="font-medium text-900">
+              Valeur Attribut *
+            </label>
+            <InputText
+              id="attribute_value"
+              placeholder="La valeur de l'attribut"
+              onChange={(e) => OnInputChange(e, "attribute_value")}
+              className={classNames({
+                "p-invalid": submitted && !attribute.attribute_value,
+              })}
+            />
+            {submitted && !attribute.attribute_value && (
+              <small className="p-invalid">
+                La valeur de l&apos;attribut est obligatoire.
+              </small>
+            )}
+          </div>
         </div>
       </Dialog>
     </div>

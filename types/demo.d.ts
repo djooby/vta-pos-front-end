@@ -174,7 +174,7 @@ declare namespace Demo {
   type Category = {
     id_category: string;
     category_name: string;
-    cree_par: string;
+    created_by: string;
     date: string;
   };
 
@@ -187,7 +187,10 @@ declare namespace Demo {
     cost?: number | string;
     category?: string;
     quantity?: number | string;
+    alert_quantity?: number | string;
+    created_by?: string;
     status?: InventoryStatus;
+    attribute?: Attribute[];
     orders?: ProductOrder[];
     [key: string]:
       | string
@@ -196,8 +199,16 @@ declare namespace Demo {
       | boolean
       | undefined
       | ProductOrder[]
+      | Attribute[]
       | InventoryStatus
       | File[];
+  };
+
+  type Attribute = {
+    id_product_attribute?: string;
+    id_product?: string;
+    attribute_name?: string;
+    attribute_value?: string;
   };
 
   type ProductOrder = {
