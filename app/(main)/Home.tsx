@@ -1,16 +1,12 @@
 "use client";
 import { UserContext } from "@/layout/context/usercontext";
-import axios from "axios";
-import { Chart } from "primereact/chart";
+import { Chart } from "chart.js";
 import { Toast } from "primereact/toast";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import { useContext, useEffect, useRef, useState } from "react";
 
 export default function Home() {
   const { userInfo } = useContext(UserContext);
   const [loading, setLoading] = useState(true);
-
-  const [categoriesNames, setCategoriesNames] = useState(["", "", "", "", ""]);
-  const [quantities, setQuantities] = useState([0, 0, 0, 0, 0]);
 
   const [chartData, setChartData] = useState({});
   const [chartOptions, setChartOptions] = useState({});
@@ -27,37 +23,6 @@ export default function Home() {
     });
   };
 
-  const getCategoriesStats = useCallback(async () => {
-    const dataToApi = {
-      token: userInfo.token,
-    };
-    try {
-      await axios.post("/api/category/stats", dataToApi).then((res) => {
-        const result = res.data;
-        if (result.status === "success") {
-          // Extraction des catégories et des quantités dans des tableaux
-          var categories: string[] = result.data.map(
-            (item: any) => item.category
-          );
-          var quantities: number[] = result.data.map((item: any) =>
-            parseInt(item.quantity)
-          );
-
-          setCategoriesNames(categories);
-          setQuantities(quantities);
-        } else {
-          toastMessage("error", result.data);
-        }
-      });
-    } catch (e) {
-      toastMessage(
-        "error",
-        "Une erreur est survenue lors de la récupération des catégories."
-      );
-      console.log(e);
-    }
-  }, [userInfo.token]);
-
   useEffect(() => {
     const documentStyle = getComputedStyle(document.documentElement);
     const textColor = documentStyle.getPropertyValue("--text-color");
@@ -66,13 +31,19 @@ export default function Home() {
     );
     const surfaceBorder = documentStyle.getPropertyValue("--surface-border");
     const data = {
-      labels: categoriesNames,
+      labels: ["January", "February", "March", "April", "May", "June", "July"],
       datasets: [
         {
-          label: "Inventaire",
+          label: "My First dataset",
           backgroundColor: documentStyle.getPropertyValue("--blue-500"),
           borderColor: documentStyle.getPropertyValue("--blue-500"),
-          data: quantities,
+          data: [65, 59, 80, 81, 56, 55, 40],
+        },
+        {
+          label: "My Second dataset",
+          backgroundColor: documentStyle.getPropertyValue("--pink-500"),
+          borderColor: documentStyle.getPropertyValue("--pink-500"),
+          data: [28, 48, 40, 19, 86, 27, 90],
         },
       ],
     };
@@ -114,18 +85,31 @@ export default function Home() {
 
     setChartData(data);
     setChartOptions(options);
-  }, [categoriesNames, quantities]);
+  }, []);
 
-  useEffect(() => {
-    getCategoriesStats();
-  }, [getCategoriesStats]);
   return (
     <>
-      <div className="col-12 md:col-6">
-        <div className="card">
-          <Chart type="bar" data={chartData} options={chartOptions} />
-        </div>
+      <div className="card">
+        <Chart type="bar" data={chartData} options={chartOptions} />
       </div>
     </>
+    // <div className="col-12 ">
+    //   <Toast ref={toast} />
+    //   <div className="card">
+    //     <div className="card-title mb-3">
+    //       <span className="text-900 text-xl font-semibold">
+    //         Dernieres Transactions
+    //       </span>
+    //     </div>
+    //     <Divider />
+    //     <div className="card-body">
+    //       <TransactionList
+    //         loading={loading}
+    //         rows={5}
+    //         transactions={transactions}
+    //       />
+    //     </div>
+    //   </div>
+    // </div>
   );
 }
