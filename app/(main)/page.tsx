@@ -2,6 +2,7 @@
 import { UserContext } from "@/layout/context/usercontext";
 import axios from "axios";
 import { Chart } from "primereact/chart";
+import { Divider } from "primereact/divider";
 import { Toast } from "primereact/toast";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
@@ -121,8 +122,13 @@ export default function Home() {
   }, [getCategoriesStats]);
   return (
     <>
-      <div className="col-12 md:col-6">
+      <div className="col-12 md:col-12">
         <div className="card">
+          <div className="card-title flex mb-3 justify-content-between align-items-center">
+            <span className="text-900 text-xl font-semibold">Inventaire</span>
+          </div>
+
+          <Divider />
           <Chart type="bar" data={chartData} options={chartOptions} />
         </div>
       </div>
