@@ -343,7 +343,6 @@ export default function Profile() {
                   "p-invalid": submitted && !product.alert_quantity,
                 })}
                 onChange={(e) => onOtherInputChange(e.value, "alert_quantity")}
-                max={1500}
               />
               {submitted && !product.alert_quantity && (
                 <small className="p-invalid">

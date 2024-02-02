@@ -8,17 +8,13 @@ import { useRouter } from "next/navigation";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
-import {
-  DataTable,
-  DataTableExpandedRows,
-  DataTableFilterMeta,
-} from "primereact/datatable";
+import { DataTable, DataTableFilterMeta } from "primereact/datatable";
 import { Dialog } from "primereact/dialog";
 import { Dropdown } from "primereact/dropdown";
+import { InputNumber } from "primereact/inputnumber";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import { Tooltip } from "primereact/tooltip";
-import { classNames } from "primereact/utils";
 import React, {
   useCallback,
   useContext,
@@ -28,9 +24,6 @@ import React, {
 } from "react";
 
 export default function Products() {
-  const [expandedRows, setExpandedRows] = useState<
-    any[] | DataTableExpandedRows
-  >([]);
   const [products, setProducts] = useState<Demo.Product[]>([]);
   const [loading, setLoading] = useState(true);
   const [filters, setFilters] = useState<DataTableFilterMeta>({});
@@ -40,13 +33,46 @@ export default function Products() {
   const [isDeleteDialog, setIsDeleteDialog] = useState(false);
 
   const [loadingDelete, setLoadingDelete] = useState(false);
-  const [loadingAttribute, setLoadingAttribute] = useState(false);
+
+  const colors = [
+    "Non définie",
+    "Abricot",
+    "Argent",
+    "Beige",
+    "Blanc",
+    "Bleu",
+    "Citron vert",
+    "Crème",
+    "Cuivre",
+    "Cyan",
+    "Gris",
+    "Indigo",
+    "Jaune",
+    "Kaki",
+    "Magenta",
+    "Mauve",
+    "Noir",
+    "Olive",
+    "Orange",
+    "Or",
+    "Rose",
+    "Rouge",
+    "Saumon",
+    "Turquoise",
+    "Vert",
+    "Violet",
+  ];
+
+  const sizeShirt = ["Youth", "XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+  const sizeCup = ["11 oz", "13 oz", "15 oz"];
+  const sizeTumbler = ["18 oz", "20 oz", "30 oz", "15 oz"];
 
   const { userInfo } = useContext(UserContext);
 
   const router = useRouter();
 
   let emptyProduct = {
+    id_product: "",
     code: fonctions.generateRandomString(10),
     category: "",
     color: "",
@@ -59,28 +85,7 @@ export default function Products() {
     date: fonctions.getCurrentDate(),
   };
 
-  let emptyAttribute = {
-    id_product_attribute: "",
-    id_product: "",
-    attribute_name: "",
-    attribute_value: "",
-  };
-
-  const attributeTypeList = ["Couleur", "Taille", "Type", "Poids"];
-  const [selectedAttributeList, setSelectedAttributeList] = useState(null);
-
-  const [submitted, setSubmitted] = useState(false);
-
   const [product, setProduct] = useState<Demo.Product>(emptyProduct);
-
-  const [attribute, setAttribute] = useState<Demo.Attribute>(emptyAttribute);
-
-  const OnInputChange = (e: any, name: any) => {
-    const val = (e.target && e.target.value) || "";
-    let _attribute: any = { ...attribute };
-    _attribute[`${name}`] = val;
-    setAttribute(_attribute);
-  };
 
   const onGlobalFilterChange: React.ChangeEventHandler<HTMLInputElement> = (
     e
@@ -217,50 +222,6 @@ export default function Products() {
     );
   };
 
-  const deleteAttribute = async (id_product_attribute: any) => {
-    setLoadingAttribute(true);
-
-    const dataToApi = {
-      token: userInfo.token,
-      id_product_attribute: id_product_attribute,
-    };
-    try {
-      await axios.post("/api/attribute/delete", dataToApi).then((res) => {
-        const result = res.data;
-        if (result.status === "success") {
-          toastMessage("success", result.data);
-          getProducts();
-        } else {
-          toastMessage("error", result.data);
-        }
-      });
-    } catch (e) {
-      console.log("Erreur delete attribute: ", e);
-      toastMessage(
-        "error",
-        "Une erreur est survenue lors de la suppression de l'attribut."
-      );
-    }
-    setLoadingAttribute(false);
-  };
-
-  const actionAttributeTemplate = (rowData: any) => {
-    return (
-      <>
-        <Button
-          icon="pi pi-trash"
-          severity="danger"
-          rounded
-          className="mb-2"
-          type="button"
-          tooltip="Supprimer"
-          tooltipOptions={{ position: "top" }}
-          onClick={() => deleteAttribute(rowData.id_product_attribute)}
-        />
-      </>
-    );
-  };
-
   const deleteDialogFooter = (
     <>
       <Button
@@ -338,110 +299,166 @@ export default function Products() {
     );
   };
 
-  const rowExpansionTemplate = (data: Demo.Product) => {
-    return (
-      <div className="orders-subtable">
-        <div className="flex flex-columnp align-items-center justify-content-start">
-          <h5>Attributs de: {data.category}</h5>
-          <Button
-            icon="pi pi-plus"
-            severity="success"
-            rounded
-            className="mb-2 ml-3"
-            type="button"
-            tooltip="Ajouter attribut"
-            tooltipOptions={{ position: "top" }}
-            onClick={() => addAttribute(data.id_product)}
-          />
-        </div>
-        <DataTable
-          style={{ maxWidth: "400px" }}
-          value={data.attribute}
-          responsiveLayout="scroll"
-          loading={loadingAttribute}
-        >
-          <Column field="attribute_name" header="Attribut" sortable></Column>
-          <Column field="attribute_value" header="Valeur" sortable></Column>
-          <Column
-            field=""
-            header="Action"
-            body={actionAttributeTemplate}
-          ></Column>
-        </DataTable>
-      </div>
-    );
-  };
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [loadingCategories, setLoadingCategories] = useState(true);
 
-  const [isNewDialogAttribute, setIsNewDialogAttribute] = useState(false);
+  const [categoriesName, setCategoriesName] = useState<string[]>();
 
-  const addAttribute = (id_product: any) => {
-    setIsNewDialogAttribute(true);
-    attribute.id_product = id_product;
-  };
+  const getCategories = useCallback(async () => {
+    var dataToApi = {
+      token: userInfo.token,
+    };
 
-  const newDialogAttributeFooter = (
-    <>
-      <Button
-        loading={loadingAttribute}
-        label="Non"
-        icon="pi pi-times"
-        severity="secondary"
-        className="p-button-text"
-        text
-        onClick={() => onHideNewDialog()}
-      />
-      <Button
-        label="Oui"
-        icon="pi pi-check"
-        text
-        loading={loadingAttribute}
-        onClick={() => saveAttribute()}
-      />
-    </>
-  );
-
-  const onHideNewDialog = () => {
-    setIsNewDialogAttribute(false);
-  };
-
-  const saveAttribute = async () => {
-    setSubmitted(true);
-    setLoadingAttribute(true);
-
-    if (attribute.attribute_name?.trim() && attribute.attribute_value?.trim()) {
-      const dataToApi = {
-        token: userInfo.token,
-        product_attribute: attribute,
-      };
-      try {
-        await axios.post("/api/attribute/add", dataToApi).then((res) => {
-          const result = res.data;
-          if (result.status === "success") {
-            setIsNewDialogAttribute(false);
-            toastMessage("success", result.data);
-            getProducts();
-          } else {
-            toastMessage("error", result.data);
-          }
-        });
-      } catch (e) {
-        console.log("Erreur save attribute: ", e);
-        toastMessage(
-          "error",
-          "Une erreur est survenue lors de la sauvegarde de l'attribut."
-        );
-      }
-      setSubmitted(false);
+    try {
+      await axios.post("/api/category/list", dataToApi).then((res) => {
+        var result = res.data;
+        if (result.status === "success") {
+          const categoryNames: string[] = result.data.map(
+            (item: Demo.Category) => item.category_name
+          );
+          setCategoriesName(categoryNames);
+          setLoadingCategories(false);
+        } else {
+          toastMessage("error", result.data);
+        }
+      });
+    } catch (e) {
+      toastMessage(
+        "error",
+        "Une erreur est survenue lors de la récupération des catégories."
+      );
+      console.log(e);
     }
-    setLoadingAttribute(false);
-  };
+  }, [userInfo.token]);
 
   useEffect(() => {
     if (userInfo) {
       getProducts();
+      getCategories();
     }
     initFilters();
-  }, [getProducts, layoutConfig, userInfo]);
+  }, [getCategories, getProducts, layoutConfig, userInfo]);
+
+  const onRowEditComplete = async (e: any) => {
+    setLoading(true);
+    let _product = [...products];
+    let { newData, index } = e;
+    _product[index] = newData;
+
+    //? modifier le produit
+    const dataToApi = {
+      token: userInfo.token,
+      new_product: newData,
+    };
+
+    try {
+      await axios.post("/api/product/update", dataToApi).then((res) => {
+        const result = res.data;
+        if (result.status === "success") {
+          toastMessage("success", result.data);
+          getProducts();
+          setProduct(emptyProduct);
+          setSelectedCategory(null);
+        } else {
+          toastMessage("error", result.data);
+        }
+      });
+    } catch (e) {
+      console.log(e);
+      toastMessage(
+        "error",
+        "Une erreur est survenue lors de la modification de l'article."
+      );
+    }
+    setLoading(false);
+  };
+
+  const textEditor = (options: any) => {
+    return (
+      <InputText
+        type="text"
+        value={options.value}
+        onChange={(e) => options.editorCallback(e.target.value)}
+      />
+    );
+  };
+
+  const numberEditor = (options: any) => {
+    return (
+      <InputNumber
+        placeholder="Veuillez remplir ce champs"
+        value={options.value}
+        onChange={(e) => options.editorCallback(e.value)}
+      />
+    );
+  };
+
+  const categoryEditor = (options: any) => {
+    return (
+      <Dropdown
+        value={options.value}
+        onChange={(e) => {
+          options.editorCallback(e.value);
+          setSelectedCategory(e.value);
+        }}
+        options={categoriesName}
+        placeholder="Choisir catégorie"
+        disabled={loadingCategories}
+        filter
+      />
+    );
+  };
+
+  // Options en fonction de la catégorie sélectionnée
+  let sizeOptions: string[] = [];
+  if (
+    selectedCategory === "Maillot à col" ||
+    selectedCategory === "T-Shirt" ||
+    selectedCategory === "Maillot"
+  ) {
+    sizeOptions = sizeShirt;
+  } else if (selectedCategory === "Tasse") {
+    sizeOptions = sizeCup;
+  } else if (selectedCategory === "Tumbler") {
+    sizeOptions = sizeTumbler;
+  } else {
+    sizeOptions = ["Non définie"];
+  }
+
+  const sizeEditor = (options: any) => {
+    return (
+      <Dropdown
+        value={options.value}
+        onChange={(e) => {
+          options.editorCallback(e.value);
+        }}
+        options={sizeOptions}
+        placeholder="Choisir la taille"
+        disabled={loadingCategories}
+        filter
+      />
+    );
+  };
+
+  const colorEditor = (options: any) => {
+    return (
+      <Dropdown
+        value={options.value}
+        onChange={(e) => {
+          options.editorCallback(e.value);
+        }}
+        options={colors}
+        placeholder="Choisir la couleur"
+        disabled={loadingCategories}
+        filter
+      />
+    );
+  };
+
+  const onRowEditInit = (e: any) => {
+    setSelectedCategory(e.data.category);
+    setProduct(e.data);
+  };
 
   return (
     <div className="col-12">
@@ -478,7 +495,6 @@ export default function Products() {
 
         <DataTable
           value={products}
-          rowExpansionTemplate={rowExpansionTemplate}
           loading={loading}
           dataKey="id_product"
           paginator
@@ -488,17 +504,54 @@ export default function Products() {
           responsiveLayout="scroll"
           globalFilter={globalFilterValue}
           filters={filters}
+          editMode="row"
+          onRowEditComplete={onRowEditComplete}
+          onRowEditInit={onRowEditInit}
         >
-          {/* <Column expander style={{ width: "3em" }} /> */}
           <Column field="cost" header="Image" body={imageBodyTemplate} />
-          <Column field="category" header="Catégorie" sortable />
-          <Column field="color" header="Couleur" sortable />
-          <Column field="size" header="Taille" sortable />
-          <Column field="type" header="Type" sortable />
-          <Column field="quantity" header="Qté" sortable />
+          <Column
+            field="category"
+            header="Catégorie"
+            editor={(options: any) => categoryEditor(options)}
+            sortable
+          />
+
+          <Column
+            field="size"
+            header="Taille"
+            editor={(options: any) => sizeEditor(options)}
+            sortable
+          />
+          <Column
+            field="color"
+            header="Couleur"
+            editor={(options: any) => colorEditor(options)}
+            sortable
+          />
+
+          <Column
+            field="type"
+            header="Type"
+            editor={(options: any) => textEditor(options)}
+            sortable
+          />
+          <Column
+            field="quantity"
+            header="Qté"
+            editor={(options: any) => numberEditor(options)}
+            sortable
+          />
+
+          <Column
+            field="alert_quantity"
+            header="Alerte Qté"
+            editor={(options: any) => numberEditor(options)}
+            sortable
+          />
           <Column
             field="cost"
             header="Prix d'achat"
+            editor={(options: any) => numberEditor(options)}
             body={(rowData) => priceBodyTemplate(rowData.cost)}
             sortable
           />
@@ -507,6 +560,15 @@ export default function Products() {
             header="Statut"
             body={statusBodyTemplate}
             sortable
+          />
+          <Column
+            rowEditor
+            headerStyle={{
+              minWidth: "7rem",
+              maxWidth: "7rem",
+              width: "7rem",
+            }}
+            bodyStyle={{ textAlign: "center" }}
           />
           <Column field="created_by" header="Créé par" sortable />
           <Column field="date" header="Date" sortable />
@@ -542,64 +604,6 @@ export default function Products() {
               <b>{" " + product.code + " "}</b>
             </span>
           )}
-        </div>
-      </Dialog>
-
-      {/* Modal New Attribute */}
-      <Dialog
-        visible={isNewDialogAttribute}
-        style={{ width: "450px" }}
-        header="Nouvel attribut"
-        modal
-        footer={newDialogAttributeFooter}
-        onHide={onHideNewDialog}
-      >
-        <div className="grid formgrid mt-5 p-fluid">
-          <div className="field mb-4 col-12">
-            <label htmlFor="compte" className="font-medium text-900">
-              Nom Attribut *
-            </label>
-            <Dropdown
-              id="compte"
-              options={attributeTypeList}
-              value={attribute.attribute_name}
-              onChange={(e) => {
-                setSelectedAttributeList(e.value);
-                attribute.attribute_name = e.value;
-              }}
-              placeholder="attribut"
-              itemTemplate={(option) => {
-                return option;
-              }}
-              className={classNames({
-                "p-invalid": submitted && !selectedAttributeList,
-              })}
-            />
-            {submitted && !selectedAttributeList && (
-              <small className="p-invalid">
-                Veuillez choisir l&apos;attribut.
-              </small>
-            )}
-          </div>
-
-          <div className="field mb-4 col-12">
-            <label htmlFor="attribute_value" className="font-medium text-900">
-              Valeur Attribut *
-            </label>
-            <InputText
-              id="attribute_value"
-              placeholder="La valeur de l'attribut"
-              onChange={(e) => OnInputChange(e, "attribute_value")}
-              className={classNames({
-                "p-invalid": submitted && !attribute.attribute_value,
-              })}
-            />
-            {submitted && !attribute.attribute_value && (
-              <small className="p-invalid">
-                La valeur de l&apos;attribut est obligatoire.
-              </small>
-            )}
-          </div>
         </div>
       </Dialog>
     </div>

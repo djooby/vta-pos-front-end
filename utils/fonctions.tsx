@@ -137,22 +137,6 @@ class Fonctions {
     };
   };
 
-  ifSameTransferList = (liste1: any, liste2: any) => {
-    // Vérifier si les deux listes ont la même longueur
-    if (liste1.length !== liste2.length) {
-      return false;
-    }
-
-    // Comparer chaque élément des deux listes
-    for (let i = 0; i < liste1.length; i++) {
-      // Comparer les propriétés "user" et "id"
-      if (liste1[i].id_transfert !== liste2[i].id_transfert) {
-        return false;
-      }
-    }
-    // Si toutes les comparaisons sont réussies, les listes sont égales
-    return true;
-  };
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export
