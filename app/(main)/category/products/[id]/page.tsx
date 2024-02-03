@@ -9,6 +9,8 @@ import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable, DataTableFilterMeta } from "primereact/datatable";
 import { Dialog } from "primereact/dialog";
+import { Dropdown } from "primereact/dropdown";
+import { InputNumber } from "primereact/inputnumber";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
@@ -268,12 +270,205 @@ export default function CategoryProducts({
     );
   };
 
+  const colors = [
+    "Non définie",
+    "Abricot",
+    "Argent",
+    "Beige",
+    "Blanc",
+    "Bleu",
+    "Citron vert",
+    "Crème",
+    "Cuivre",
+    "Cyan",
+    "Gris",
+    "Indigo",
+    "Jaune",
+    "Kaki",
+    "Magenta",
+    "Mauve",
+    "Noir",
+    "Olive",
+    "Orange",
+    "Or",
+    "Rose",
+    "Rouge",
+    "Saumon",
+    "Turquoise",
+    "Vert",
+    "Violet",
+  ];
+
+  const sizeShirt = ["Youth", "XS", "S", "M", "L", "XL", "XXL", "XXXL"];
+  const sizeCup = ["11 oz", "13 oz", "15 oz"];
+  const sizeTumbler = ["18 oz", "20 oz", "30 oz", "15 oz"];
+
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [loadingCategories, setLoadingCategories] = useState(true);
+
+  const [categoriesName, setCategoriesName] = useState<string[]>();
+
+  const getCategories = useCallback(async () => {
+    var dataToApi = {
+      token: userInfo.token,
+    };
+
+    try {
+      await axios.post("/api/category/list", dataToApi).then((res) => {
+        var result = res.data;
+        if (result.status === "success") {
+          const categoryNames: string[] = result.data.map(
+            (item: Demo.Category) => item.category_name
+          );
+          setCategoriesName(categoryNames);
+          setLoadingCategories(false);
+        } else {
+          toastMessage("error", result.data);
+        }
+      });
+    } catch (e) {
+      toastMessage(
+        "error",
+        "Une erreur est survenue lors de la récupération des catégories."
+      );
+      console.log(e);
+    }
+  }, [userInfo.token]);
+
+  const onRowEditComplete = async (e: any) => {
+    setLoading(true);
+    let _product = [...products];
+    let { newData, index } = e;
+    _product[index] = newData;
+
+    //? modifier le produit
+    const dataToApi = {
+      token: userInfo.token,
+      new_product: newData,
+    };
+
+    try {
+      await axios.post("/api/product/update", dataToApi).then((res) => {
+        const result = res.data;
+        if (result.status === "success") {
+          toastMessage("success", result.data);
+          setProduct(emptyProduct);
+          getCategoryProducts();
+          setSelectedCategory(null);
+        } else {
+          toastMessage("error", result.data);
+        }
+      });
+    } catch (e) {
+      console.log(e);
+      toastMessage(
+        "error",
+        "Une erreur est survenue lors de la modification de l'article."
+      );
+    }
+    setLoading(false);
+  };
+
+  const textEditor = (options: any) => {
+    return (
+      <InputText
+        type="text"
+        value={options.value}
+        onChange={(e) => options.editorCallback(e.target.value)}
+      />
+    );
+  };
+
+  const numberEditor = (options: any) => {
+    return (
+      <InputNumber
+        placeholder="Veuillez remplir ce champs"
+        value={options.value}
+        onChange={(e) => options.editorCallback(e.value)}
+      />
+    );
+  };
+
+  const categoryEditor = (options: any) => {
+    return (
+      <Dropdown
+        value={options.value}
+        onChange={(e) => {
+          options.editorCallback(e.value);
+          setSelectedCategory(e.value);
+        }}
+        options={categoriesName}
+        placeholder="Choisir catégorie"
+        disabled={loadingCategories}
+        filter
+      />
+    );
+  };
+
+  // Options en fonction de la catégorie sélectionnée
+  let sizeOptions: string[] = [];
+  if (
+    selectedCategory === "Maillot à col" ||
+    selectedCategory === "T-Shirt" ||
+    selectedCategory === "Maillot"
+  ) {
+    sizeOptions = sizeShirt;
+  } else if (selectedCategory === "Tasse") {
+    sizeOptions = sizeCup;
+  } else if (selectedCategory === "Tumbler") {
+    sizeOptions = sizeTumbler;
+  } else {
+    sizeOptions = ["Non définie"];
+  }
+
+  const sizeEditor = (options: any) => {
+    return (
+      <Dropdown
+        value={options.value}
+        onChange={(e) => {
+          options.editorCallback(e.value);
+        }}
+        options={sizeOptions}
+        placeholder="Choisir la taille"
+        disabled={loadingCategories}
+        filter
+      />
+    );
+  };
+
+  const colorEditor = (options: any) => {
+    return (
+      <Dropdown
+        value={options.value}
+        onChange={(e) => {
+          options.editorCallback(e.value);
+        }}
+        options={colors}
+        placeholder="Choisir la couleur"
+        disabled={loadingCategories}
+        filter
+      />
+    );
+  };
+
+  const onRowEditInit = (e: any) => {
+    setSelectedCategory(e.data.category);
+    setProduct(e.data);
+  };
+
   useEffect(() => {
     if (userInfo) {
       getCategoryProducts();
     }
     initFilters();
   }, [getCategoryProducts, layoutConfig, userInfo]);
+
+  useEffect(() => {
+    if (userInfo) {
+      getCategories();
+    }
+    initFilters();
+  }, [getCategories, userInfo]);
 
   return (
     <div className="col-12">
@@ -310,26 +505,12 @@ export default function CategoryProducts({
           responsiveLayout="scroll"
           globalFilter={globalFilterValue}
           filters={filters}
+          editMode="row"
+          onRowEditComplete={onRowEditComplete}
+          onRowEditInit={onRowEditInit}
         >
-          <Column field="cost" header="Image" body={imageBodyTemplate} />
-          <Column field="size" header="Taille" sortable />
-          <Column field="color" header="Couleur" sortable />
-          <Column field="type" header="Type" sortable />
-          <Column field="quantity" header="Qté" sortable />
-          <Column field="alert_quantity" header="Alerte Qté" sortable />
           <Column
-            field="cost"
-            header="Prix d'achat"
-            body={(rowData) => priceBodyTemplate(rowData.cost)}
-            sortable
-          />
-          <Column
-            field="status"
-            header="Statut"
-            body={statusBodyTemplate}
-            sortable
-          />
-          <Column
+            rowEditor
             headerStyle={{
               minWidth: "7rem",
               maxWidth: "7rem",
@@ -337,6 +518,68 @@ export default function CategoryProducts({
             }}
             bodyStyle={{ textAlign: "center" }}
           />
+          <Column field="cost" header="Image" body={imageBodyTemplate} />
+
+          <Column
+            field="category"
+            header="Catégorie"
+            editor={(options: any) => categoryEditor(options)}
+            sortable
+          />
+
+          <Column
+            field="size"
+            header="Taille"
+            editor={(options: any) => sizeEditor(options)}
+            sortable
+          />
+          <Column
+            field="color"
+            header="Couleur"
+            editor={(options: any) => colorEditor(options)}
+            sortable
+          />
+
+          <Column
+            field="type"
+            header="Type"
+            editor={(options: any) => textEditor(options)}
+            sortable
+          />
+          <Column
+            field="quantity"
+            header="Qté"
+            editor={(options: any) => numberEditor(options)}
+            sortable
+          />
+
+          <Column
+            field="alert_quantity"
+            header="Alerte Qté"
+            editor={(options: any) => numberEditor(options)}
+            sortable
+          />
+          <Column
+            field="cost"
+            header="Prix d'achat"
+            editor={(options: any) => numberEditor(options)}
+            body={(rowData) => priceBodyTemplate(rowData.cost)}
+            sortable
+            headerStyle={{
+              minWidth: "7rem",
+              maxWidth: "7rem",
+              width: "7rem",
+            }}
+            bodyStyle={{ textAlign: "center" }}
+          />
+
+          <Column
+            field="status"
+            header="Statut"
+            body={statusBodyTemplate}
+            sortable
+          />
+
           <Column field="created_by" header="Créé par" sortable />
           <Column field="date" header="Date" sortable />
           <Column
