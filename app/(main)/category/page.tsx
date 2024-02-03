@@ -4,6 +4,7 @@ import { UserContext } from "@/layout/context/usercontext";
 import { Demo } from "@/types";
 import fonctions from "@/utils/fonctions";
 import axios from "axios";
+import { useRouter } from "next/navigation";
 import { FilterMatchMode, FilterOperator } from "primereact/api";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
@@ -112,6 +113,8 @@ export default function Categories() {
     });
   };
 
+  const router = useRouter();
+
   const getCategories = useCallback(async () => {
     const dataToapi = {
       token: userInfo.token,
@@ -180,6 +183,20 @@ export default function Categories() {
   const actionBodyTemplate = (rowData: any) => {
     return (
       <>
+        {rowData.product_quantity !== "0" && (
+          <Button
+            icon="pi pi-list"
+            rounded
+            className="mb-2 mr-2"
+            type="button"
+            tooltip="Liste produits"
+            tooltipOptions={{ position: "top" }}
+            onClick={() =>
+              router.push("/category/products/" + rowData.id_category)
+            }
+          />
+        )}
+
         <Button
           icon="pi pi-trash"
           severity="danger"
@@ -330,9 +347,10 @@ export default function Categories() {
           globalFilter={globalFilterValue}
           filters={filters}
         >
+          <Column field="category_name" header="Nom" sortable />
+          <Column field="product_quantity" header="Qté d'articles" sortable />
           <Column field="created_by" header="Créé par" sortable />
 
-          <Column field="category_name" header="Nom" sortable />
           <Column field="date" header="Date" sortable />
           <Column
             header="Action"
