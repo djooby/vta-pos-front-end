@@ -80,6 +80,7 @@ export default function Products() {
     type: "",
     cost: 0,
     quantity: 0,
+    sale_price: 0,
     alert_quantity: 0,
     created_by: userInfo.fullname,
     date: fonctions.getCurrentDate(),
@@ -554,6 +555,13 @@ export default function Products() {
             header="Prix d'achat"
             editor={(options: any) => numberEditor(options)}
             body={(rowData) => priceBodyTemplate(rowData.cost)}
+            sortable
+          />
+          <Column
+            field="sale_price"
+            header="Prix de vente"
+            editor={(options: any) => numberEditor(options)}
+            body={(rowData) => priceBodyTemplate(rowData.sale_price)}
             sortable
           />
           <Column

@@ -40,6 +40,7 @@ export default function Profile() {
     size: "",
     type: "",
     cost: 0,
+    sale_price: 0,
     quantity: 0,
     alert_quantity: 0,
     created_by: userInfo.fullname,
@@ -310,7 +311,28 @@ export default function Profile() {
               )}
             </div>
 
-            <div className="field mb-4 col-12 md:col-4">
+            <div className="field mb-4 col-12 md:col-3">
+              <label htmlFor="sale_price" className="font-medium text-900">
+                Prix de vente *
+              </label>
+              <InputNumber
+                placeholder="Prix de vente de l'article"
+                id="sale_price"
+                type="text"
+                className={classNames({
+                  "p-invalid": submitted && !product.sale_price,
+                })}
+                onChange={(e) => onOtherInputChange(e.value, "sale_price")}
+                max={150000}
+              />
+              {submitted && !product.sale_price && (
+                <small className="p-invalid">
+                  Le prix de vente est obligatoire.
+                </small>
+              )}
+            </div>
+
+            <div className="field mb-4 col-12 md:col-3">
               <label htmlFor="quantity" className="font-medium text-900">
                 Quantité *
               </label>
@@ -331,7 +353,7 @@ export default function Profile() {
               )}
             </div>
 
-            <div className="field mb-4 col-12 md:col-4">
+            <div className="field mb-4 col-12 md:col-3">
               <label htmlFor="alert_quantity" className="font-medium text-900">
                 Alerte quantité *
               </label>
@@ -351,7 +373,7 @@ export default function Profile() {
               )}
             </div>
 
-            <div className="field mb-4 col-12 md:col-4">
+            <div className="field mb-4 col-12 md:col-3">
               <label htmlFor="type" className="font-medium text-900">
                 Type
               </label>
