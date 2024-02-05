@@ -42,6 +42,8 @@ export default function Categories() {
   let emptyCategory = {
     id_category: "",
     category_name: "",
+    image:"",
+    product_quantity: 0,
     created_by: userInfo.fullname,
     date: fonctions.getCurrentDate(),
   };

@@ -100,36 +100,12 @@ export interface UserContextProps {
   deleteUser: () => void;
 }
 
-export interface MailContextProps {
-  mails: Demo.Mail[];
-  toastRef: React.RefObject<Toast>;
-  updateMails: (data: Demo.Mail[]) => void;
-  clearMailActions: (mail: Demo.Mail) => void;
-  onStar: (id: number) => void;
-  onArchive: (id: number) => void;
-  onBookmark: (id: number) => void;
-  onDelete: (id: number) => void;
-  onDeleteMultiple: (mailArray: Demo.Mail[]) => void;
-  onArchiveMultiple: (mailArray: Demo.Mail[]) => void;
-  onSpamMultiple: (mailArray: Demo.Mail[]) => void;
-  onTrash: (id: number) => void;
-  onSend: (mail: Demo.Mail) => void;
-}
 
 export interface MenuContextProps {
   activeMenu: string;
   setActiveMenu: Dispatch<SetStateAction<string>>;
 }
 
-export interface ChatContextProps {
-  users: Demo.User[];
-  setUsers: Dispatch<SetStateAction<Demo.User[]>>;
-  activeUser: Demo.User;
-  setActiveUser: Dispatch<SetStateAction<User>>;
-  getChatData: () => Promise<Demo.User[]>;
-  changeActiveChat: (user: Demo.User) => void;
-  sendMessage: (message: Demo.Message) => void;
-}
 
 export interface TaskContextProps {
   dialogConfig: Demo.DialogConfig;

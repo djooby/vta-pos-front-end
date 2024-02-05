@@ -25,6 +25,8 @@ export default function CategoryProducts({
   let emptyCategory: Demo.Category = {
     id_category: "0",
     category_name: "",
+    image: "",
+    product_quantity: 0,
     created_by: "",
     date: "",
   };
@@ -102,6 +104,7 @@ export default function CategoryProducts({
     type: "",
     cost: 0,
     quantity: 0,
+    sale_price: 0,
     alert_quantity: 0,
     created_by: userInfo.fullname,
     date: fonctions.getCurrentDate(),
@@ -564,6 +567,20 @@ export default function CategoryProducts({
             header="Prix d'achat"
             editor={(options: any) => numberEditor(options)}
             body={(rowData) => priceBodyTemplate(rowData.cost)}
+            sortable
+            headerStyle={{
+              minWidth: "7rem",
+              maxWidth: "7rem",
+              width: "7rem",
+            }}
+            bodyStyle={{ textAlign: "center" }}
+          />
+
+          <Column
+            field="cost"
+            header="Prix de vente"
+            editor={(options: any) => numberEditor(options)}
+            body={(rowData) => priceBodyTemplate(rowData.sale_price)}
             sortable
             headerStyle={{
               minWidth: "7rem",

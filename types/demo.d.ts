@@ -165,17 +165,14 @@ declare namespace Demo {
     lastSeen: string;
   }
 
-  interface Message {
-    text: string;
-    ownerId: number;
-    createdAt: number;
-  }
-
   type Category = {
     id_category: string;
     category_name: string;
+    image: string;
     created_by: string;
     date: string;
+    product_quantity: number;
+    products?: Product[];
   };
 
   //ProductService
@@ -185,8 +182,9 @@ declare namespace Demo {
     category: string;
     color: string;
     size: string;
-    type: string;
+    type?: string;
     cost: number;
+    sale_price: number;
     quantity: number;
     alert_quantity: number;
     created_by?: string;
@@ -213,14 +211,19 @@ declare namespace Demo {
     attribute_value?: string;
   };
 
-  type ProductOrder = {
-    id_product_order?: string;
-    id_product?: string;
-    date?: string;
-    amount?: number;
-    quantity?: number;
-    customer?: string;
-    status?: Status;
+  type OrderProduct = {
+    id_order_product?: string;
+    id_order?: string;
+    category: string;
+    image?: string;
+    size: string;
+    color: string;
+    type?: string;
+    code?: string;
+    service:string;
+    quantity: number;
+    price: number;
+    total: number;
   };
 
   type Payment = {

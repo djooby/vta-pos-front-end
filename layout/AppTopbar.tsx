@@ -1,5 +1,6 @@
 "use client";
 import type { AppTopbarRef } from "@/types";
+import { useRouter } from "next/navigation";
 import { Button } from "primereact/button";
 import {
   forwardRef,
@@ -37,6 +38,8 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
       : setImg("/layout/images/avatar/avatar.png");
   }, [userInfo]);
 
+  const router = useRouter();
+
   return (
     <div className="layout-topbar">
       <div className="topbar-start">
@@ -54,6 +57,18 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
 
       <div className="topbar-end">
         <ul className="topbar-menu">
+          <li className="ml-3">
+            <Button
+              type="button"
+              icon="pi pi-shopping-bag"
+              label="POS"
+              rounded
+              severity="success"
+              className="flex-shrink-0"
+              onClick={() => router.push("/pos")}
+            ></Button>
+          </li>
+
           <li className="ml-3">
             <Button
               type="button"
