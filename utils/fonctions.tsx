@@ -62,18 +62,14 @@ class Fonctions {
     return result;
   }
 
-  generateId() {
-    let date = new Date();
-    let id = this.generateRandomString(2);
-    let id3 = this.generateRandomString(2);
-    let id2 = this.generateRandomString(2);
-    let month = date.getMonth() + 1;
-    let day = date.getDate();
-    let year = date.getFullYear();
-
-    let code = day + id3 + id + year + id2;
-
-    return code;
+  generateId(length: number) {
+    let result = "";
+    const characters = "0123456789";
+    const charactersLength = characters.length;
+    for (let i = 0; i < length; i++) {
+      result += characters.charAt(Math.floor(Math.random() * charactersLength));
+    }
+    return result;
   }
 
   validateEmail = (email: string) => {
@@ -136,7 +132,6 @@ class Fonctions {
       minLength: regexMinLength.test(password),
     };
   };
-
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

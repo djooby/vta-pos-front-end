@@ -1,5 +1,4 @@
 // FullCalendar Types
-import { EventInput } from "@fullcalendar/core";
 
 // Chart.js Types
 import { ChartData, ChartOptions } from "chart.js";
@@ -72,23 +71,6 @@ export interface ChartOptionsState {
   radarOptions?: ChartOptions;
 }
 
-export interface AppMailProps {
-  mails: Demo.Mail[];
-}
-
-export interface AppMailSidebarItem {
-  label: string;
-  icon: string;
-  to?: string;
-  badge?: number;
-  badgeValue?: number;
-}
-
-export interface AppMailReplyProps {
-  content: Demo.Mail | null;
-  hide: () => void;
-}
-
 // Demo Namespace
 declare namespace Demo {
   // Interfaces
@@ -128,32 +110,10 @@ declare namespace Demo {
     endDate?: string;
   }
 
-  interface Member {
-    name: string;
-    image: string;
-  }
-
   interface DialogConfig {
     visible: boolean;
     header: string;
     newTask: boolean;
-  }
-
-  interface Mail {
-    id: number;
-    from: string;
-    to: string;
-    email: string;
-    image: string;
-    title: string;
-    message: string;
-    date: string;
-    important: boolean;
-    starred: boolean;
-    trash: boolean;
-    spam: boolean;
-    archived: boolean;
-    sent: boolean;
   }
 
   interface User {
@@ -211,6 +171,13 @@ declare namespace Demo {
     attribute_value?: string;
   };
 
+  type Client = {
+    id_client: number;
+    name: string;
+    phone: string;
+    address?: string;
+  };
+
   type OrderProduct = {
     id_order_product?: string;
     id_order?: string;
@@ -220,51 +187,33 @@ declare namespace Demo {
     color: string;
     type?: string;
     code?: string;
-    service:string;
+    service: string;
     quantity: number;
     price: number;
     total: number;
   };
 
+  type Order = {
+    id_oder?: string;
+    client: Client;
+    subTotal: number;
+    discount: number;
+    total: number;
+    status?: string;
+    deliveryDate?: string;
+    orderProducts?: OrderProduct[];
+    date: string;
+    code: string;
+  };
+
+
   type Payment = {
+    id_order?: number;
     name: string;
     amount: number;
-    paid: boolean;
+    paid?: boolean;
     date: string;
   };
-
-  //CustomerService
-  type Customer = {
-    id?: number;
-    name?: string;
-    country?: ICountryObject;
-    company?: string;
-    date: Date;
-    status?: string;
-    activity?: number;
-    balance?: number | string;
-    verified?: boolean;
-    amount?: number;
-    price?: number;
-    rating?: number;
-    image?: string;
-    orders?: Demo.Customer[];
-    inventoryStatus?: string;
-    representative: {
-      name: string;
-      image: string;
-    };
-  };
-
-  // EventService
-  interface Event extends EventInput {
-    location?: string;
-    description?: string;
-    tag?: {
-      name: string;
-      color: string;
-    };
-  }
 
   // PhotoService
   type Photo = {
@@ -272,11 +221,6 @@ declare namespace Demo {
     itemImageSrc?: string | undefined;
     thumbnailImageSrc?: string | undefined;
     alt?: string | undefined;
-  };
-
-  type Country = {
-    name: string;
-    code: string;
   };
 
   // IconService

@@ -1,4 +1,5 @@
 "use client";
+import Invoice from "@/components/orders/invoice";
 import { UserContext } from "@/layout/context/usercontext";
 import { Demo } from "@/types";
 import fonctions from "@/utils/fonctions";
@@ -11,6 +12,8 @@ import { Dialog } from "primereact/dialog";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
 import { InputText } from "primereact/inputtext";
+import { Panel } from "primereact/panel";
+import { Sidebar } from "primereact/sidebar";
 import { Toast } from "primereact/toast";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
@@ -38,7 +41,21 @@ export default function POS() {
 
   const chooseProduct = (product: Demo.Product) => {
     setProduct(product);
+
+    let newProductOrder: Demo.OrderProduct = {
+      category: product.category,
+      code: product.code,
+      color: product.color,
+      size: product.size,
+      type: product.type,
+      service: selectedService,
+      price: product.sale_price,
+      quantity: 1,
+      total: product.sale_price,
+    };
+    setOrderProduct(newProductOrder);
     setBoxSellingVisible(true);
+    setVisibleProducts(false);
   };
 
   const sortOptions = [
@@ -249,6 +266,14 @@ export default function POS() {
 
   //! =======================================================
   const [loadingProducts, setLoadingProducts] = useState(false);
+  const priceBodyTemplate = (price: any) => {
+    return (
+      <>
+        <span className="p-column-title">Prix</span>
+        {fonctions.formatCurrency(price)}
+      </>
+    );
+  };
 
   const listeService = ["Normal", "Personnalisé"];
   const [selectedService, setSelectedService] = useState<string>("Normal");
@@ -343,7 +368,6 @@ export default function POS() {
   );
 
   const [boxSellingVisible, setBoxSellingVisible] = useState(false);
-  const [quantity, setQuantity] = useState<any>(1);
 
   //! =============== PRODUCT ORDER ==============
   let emptyProductOrder: Demo.OrderProduct = {
@@ -355,13 +379,47 @@ export default function POS() {
     service: selectedService,
     price: product.sale_price,
     quantity: 1,
-    total: product.sale_price * quantity,
+    total: product.sale_price,
   };
 
-  const [orderProducts, setOrderProducts] = useState<Demo.OrderProduct[]>();
+  const [orderProducts, setOrderProducts] = useState<Demo.OrderProduct[]>([]);
   const [orderProduct, setOrderProduct] = useState<Demo.OrderProduct>(
     emptyProductOrder
   );
+
+  const actionOrderBodyTemplate = (rowData: any) => {
+    return (
+      <>
+        <Button
+          icon="pi pi-trash"
+          severity="danger"
+          rounded
+          className="mb-2"
+          type="button"
+          tooltip="Supprimer"
+          tooltipOptions={{ position: "top" }}
+        />
+      </>
+    );
+  };
+
+  const updateOrder = () => {
+    let somme_totale = 0;
+
+    // update order total
+    for (const element of orderProducts) {
+      somme_totale += element.total;
+    }
+    let _total =
+      order.discount > 0 ? somme_totale - order.discount : somme_totale;
+
+    setOrder({
+      ...order,
+      total: _total,
+      subTotal: somme_totale,
+      orderProducts: orderProducts,
+    });
+  };
 
   const confirmBoxSelling = () => {
     orderProduct.total = orderProduct.price * orderProduct.quantity;
@@ -371,13 +429,14 @@ export default function POS() {
     orderProduct.size = product.size;
     orderProduct.type = product.type;
 
-    console.log("PO: ", orderProduct);
-    console.log("P: ", product);
+    toastMessage("success", "Article ajouté avec succès.");
+    orderProducts?.push(orderProduct);
+    setBoxSellingVisible(false);
+    setProduct(emptyProduct);
+    setCategory(emptyCategory);
+    setVisibleProducts(false);
 
-    // setBoxSellingVisible(false);
-    // setProduct(emptyProduct);
-    // setCategory(emptyCategory);
-    // setVisibleProducts(false);
+    updateOrder();
   };
 
   const onInputChange = (value: any, name: any) => {
@@ -386,8 +445,129 @@ export default function POS() {
     setOrderProduct(_orderProduct);
   };
 
+  const headerTemplate = (options: any) => {
+    const className = `${options.className} justify-content-space-between`;
+
+    return (
+      <div className={className}>
+        <div className="flex align-items-center gap-2">
+          <span className="font-bold">Panier</span>
+        </div>
+        <Button
+          label="Discount"
+          icon="pi pi-percentage"
+          text
+          severity="info"
+          onClick={() => setVisibleDiscountDialog(true)}
+        />
+      </div>
+    );
+  };
+
+  const footerTemplate = (options: any) => {
+    const className = `${options.className} flex align-items-center justify-content-between`;
+
+    return (
+      <div className={className}>
+        <ul className="list-none py-0 pr-0 pl-0 md:pl-5 mt-6 mx-0 mb-0 flex-auto">
+          <li className="flex justify-content-between mb-4">
+            <span className="text-xl text-900 font-semibold">Subtotal</span>
+            <span className="text-xl text-900">
+              {fonctions.formatCurrency(order.subTotal)}
+            </span>
+          </li>
+          <li className="flex justify-content-between mb-4">
+            <span className="text-xl text-900 font-semibold">Discount</span>
+            <span className="text-xl text-900">
+              {fonctions.formatCurrency(order.discount)}
+            </span>
+          </li>
+
+          <li className="flex justify-content-between border-top-1 surface-border mb-4 pt-4">
+            <span className="text-xl text-900 font-bold text-3xl">Total</span>
+            <span className="text-xl text-900 font-bold text-3xl">
+              {fonctions.formatCurrency(order.total)}
+            </span>
+          </li>
+          <li className="flex justify-content-end">
+            <Button
+              className="mr-3"
+              label="Proforma"
+              icon="pi pi-file-pdf"
+              outlined
+              disabled={orderProducts.length === 0}
+              onClick={() => setVisibleConfirmOrder(true)}
+            ></Button>
+
+            <Button
+              label="Cash"
+              icon="pi pi-money-bill"
+              disabled={orderProducts.length === 0}
+              onClick={() => setVisibleConfirmOrder(true)}
+            ></Button>
+          </li>
+        </ul>
+      </div>
+    );
+  };
+
+  let emptyClient: Demo.Client = {
+    id_client: 0,
+    name: "Jhonathan Doe",
+    phone: "(+509) 3687-6026",
+    address: "Haiti",
+  };
+
+  const [client, setClient] = useState<Demo.Client>(emptyClient);
+
+  let emptyOrder: Demo.Order = {
+    client: client,
+    subTotal: 0,
+    discount: 0,
+    total: 0,
+    date: fonctions.getCurrentDate(),
+    code: fonctions.generateId(6),
+    status: "null",
+  };
+
+  const onHideDiscountDialogFooter = () => {
+    setVisibleDiscountDialog(false);
+    setOrder({ ...order, discount: 0 });
+
+    updateOrder();
+  };
+
+  const discountDialogFooter = (
+    <>
+      <Button
+        label="Annuler"
+        icon="pi pi-times"
+        severity="secondary"
+        className="p-button-text"
+        text
+        onClick={onHideDiscountDialogFooter}
+      />
+      <Button
+        label="Enregistrer"
+        icon="pi pi-check"
+        text
+        onClick={() => {
+          updateOrder();
+          setVisibleDiscountDialog(false);
+        }}
+      />
+    </>
+  );
+
+  const [order, setOrder] = useState<Demo.Order>(emptyOrder);
+
+  const [visibleDiscountDialog, setVisibleDiscountDialog] = useState(false);
+  const [visibleConfirmOrder, setVisibleConfirmOrder] = useState(false);
+
   return (
     <div className="grid">
+      <Toast ref={toast} />
+
       <div className="col-12 md:col-6">
         <div className="card">
           <h5>Catégories</h5>
@@ -405,41 +585,36 @@ export default function POS() {
       </div>
 
       <div className="col-12 md:col-6">
-        <div className="card">
-          <h5>Article(s) selectionné(s)</h5>
-        </div>
-      </div>
-
-      <Dialog
-        header={"Liste de: " + category.category_name}
-        position="top"
-        visible={visibleProducts}
-        style={{ width: "50vw" }}
-        onHide={() => setVisibleProducts(false)}
-      >
-        <div className="card">
-          <h5>Articles</h5>
+        <Panel
+          headerTemplate={headerTemplate}
+          footerTemplate={footerTemplate}
+          toggleable
+        >
           <DataTable
-            loading={loadingProducts}
-            dataKey="id_category"
-            paginator
+            dataKey="id_product_order"
             rows={10}
             className="datatable-responsive"
-            value={products}
-            emptyMessage="Aucun résultat."
+            value={orderProducts}
+            emptyMessage="Aucun artilce."
             responsiveLayout="scroll"
           >
             <Column field="cost" header="Image" body={imageBodyTemplate} />
-
-            <Column field="size" header="Taille" sortable />
-            <Column field="color" header="Couleur" sortable />
-            <Column field="type" header="Type" sortable />
+            <Column field="category" header="Category" sortable />
+            <Column field="code" header="Code" sortable />
+            <Column field="quantity" header="Qte" sortable />
             <Column
-              field="status"
-              header="Statut"
-              body={statusBodyTemplate}
+              field="price"
+              header="Prix Unitaire"
+              sortable
+              body={(rowData) => priceBodyTemplate(rowData.price)}
+            />
+            <Column
+              field="total"
+              header="Total"
+              body={(rowData) => priceBodyTemplate(rowData.total)}
               sortable
             />
+
             <Column
               header="Action"
               headerStyle={{
@@ -447,12 +622,87 @@ export default function POS() {
                 maxWidth: "12rem",
                 width: "10rem",
               }}
-              body={actionBodyTemplate}
+              body={actionOrderBodyTemplate}
             />
           </DataTable>
-        </div>
+        </Panel>
+      </div>
+
+      <div className="col-md:col-12"></div>
+      {/*  */}
+      <Dialog
+        header={"Liste de: " + category.category_name}
+        position="top"
+        visible={visibleProducts}
+        style={{ width: "50vw" }}
+        onHide={() => setVisibleProducts(false)}
+      >
+        <DataTable
+          loading={loadingProducts}
+          dataKey="id_category"
+          paginator
+          rows={10}
+          className="datatable-responsive"
+          value={products}
+          emptyMessage="Aucun résultat."
+          responsiveLayout="scroll"
+        >
+          <Column field="cost" header="Image" body={imageBodyTemplate} />
+
+          <Column field="size" header="Taille" sortable />
+          <Column field="color" header="Couleur" sortable />
+          <Column field="type" header="Type" sortable />
+          <Column
+            field="status"
+            header="Statut"
+            body={statusBodyTemplate}
+            sortable
+          />
+          <Column
+            header="Action"
+            headerStyle={{
+              minWidth: "7rem",
+              maxWidth: "12rem",
+              width: "10rem",
+            }}
+            body={actionBodyTemplate}
+          />
+        </DataTable>
       </Dialog>
 
+      {/* confirm Dialog */}
+      <Sidebar
+        fullScreen
+        visible={visibleConfirmOrder}
+        onHide={() => setVisibleConfirmOrder(false)}
+      >
+        <Invoice type="PROFORMA" order={order} />
+      </Sidebar>
+
+      {/* discount dialog */}
+      <Dialog
+        header="Ajouter Discount"
+        position="top"
+        visible={visibleDiscountDialog}
+        style={{ width: "450px" }}
+        onHide={onHideDiscountDialogFooter}
+        footer={discountDialogFooter}
+      >
+        <div className="grid formgrid p-fluid mt-2">
+          <div className="field mb-4 col-12">
+            <label htmlFor="discount">Discount</label>
+            <InputNumber
+              id="discount"
+              value={order.discount}
+              placeholder="Entrer le montant du discount"
+              onValueChange={(e) => {
+                setOrder({ ...order, discount: e?.value as number });
+              }}
+            />
+          </div>
+        </div>
+      </Dialog>
+      {/* ORDERS dialog */}
       <Dialog
         header={"Configuration commande"}
         position="top"
