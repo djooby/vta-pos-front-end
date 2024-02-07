@@ -10,11 +10,13 @@ import { DataTable } from "primereact/datatable";
 import { DataView } from "primereact/dataview";
 import { Dialog } from "primereact/dialog";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
+import { InputMask } from "primereact/inputmask";
 import { InputNumber } from "primereact/inputnumber";
 import { InputText } from "primereact/inputtext";
 import { Panel } from "primereact/panel";
 import { Sidebar } from "primereact/sidebar";
 import { Toast } from "primereact/toast";
+import { classNames } from "primereact/utils";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 export default function POS() {
@@ -43,6 +45,7 @@ export default function POS() {
     setProduct(product);
 
     let newProductOrder: Demo.OrderProduct = {
+      id_product: product.id_product as string,
       category: product.category,
       code: product.code,
       color: product.color,
@@ -370,16 +373,18 @@ export default function POS() {
   const [boxSellingVisible, setBoxSellingVisible] = useState(false);
 
   //! =============== PRODUCT ORDER ==============
+
   let emptyProductOrder: Demo.OrderProduct = {
-    category: product.category,
-    code: product.code,
-    color: product.color,
-    size: product.size,
-    type: product.type,
-    service: selectedService,
-    price: product.sale_price,
+    id_product: "",
+    category: "",
+    code: "",
+    color: "",
+    size: "",
+    type: "",
+    service: "",
+    price: 0,
     quantity: 1,
-    total: product.sale_price,
+    total: 0,
   };
 
   const [orderProducts, setOrderProducts] = useState<Demo.OrderProduct[]>([]);
@@ -387,7 +392,7 @@ export default function POS() {
     emptyProductOrder
   );
 
-  const actionOrderBodyTemplate = (rowData: any) => {
+  const actionOrderBodyTemplate = (rowData: Demo.OrderProduct) => {
     return (
       <>
         <Button
@@ -398,27 +403,10 @@ export default function POS() {
           type="button"
           tooltip="Supprimer"
           tooltipOptions={{ position: "top" }}
+          onClick={() => deleteProduct(rowData)}
         />
       </>
     );
-  };
-
-  const updateOrder = () => {
-    let somme_totale = 0;
-
-    // update order total
-    for (const element of orderProducts) {
-      somme_totale += element.total;
-    }
-    let _total =
-      order.discount > 0 ? somme_totale - order.discount : somme_totale;
-
-    setOrder({
-      ...order,
-      total: _total,
-      subTotal: somme_totale,
-      orderProducts: orderProducts,
-    });
   };
 
   const confirmBoxSelling = () => {
@@ -436,7 +424,7 @@ export default function POS() {
     setCategory(emptyCategory);
     setVisibleProducts(false);
 
-    updateOrder();
+    // updateOrder();
   };
 
   const onInputChange = (value: any, name: any) => {
@@ -495,14 +483,17 @@ export default function POS() {
               label="Proforma"
               icon="pi pi-file-pdf"
               outlined
-              disabled={orderProducts.length === 0}
-              onClick={() => setVisibleConfirmOrder(true)}
+              disabled={orderProducts.length === 0 || !client.id_client}
+              onClick={() => {
+                setVisibleConfirmOrder(true);
+                console.log(client);
+              }}
             ></Button>
 
             <Button
               label="Cash"
               icon="pi pi-money-bill"
-              disabled={orderProducts.length === 0}
+              disabled={orderProducts.length === 0 || !client.id_client}
               onClick={() => setVisibleConfirmOrder(true)}
             ></Button>
           </li>
@@ -513,9 +504,10 @@ export default function POS() {
 
   let emptyClient: Demo.Client = {
     id_client: 0,
-    name: "Jhonathan Doe",
-    phone: "(+509) 3687-6026",
-    address: "Haiti",
+    name: "",
+    phone: "",
+    address: "",
+    date: fonctions.getCurrentDate(),
   };
 
   const [client, setClient] = useState<Demo.Client>(emptyClient);
@@ -534,7 +526,7 @@ export default function POS() {
     setVisibleDiscountDialog(false);
     setOrder({ ...order, discount: 0 });
 
-    updateOrder();
+    // updateOrder();
   };
 
   const discountDialogFooter = (
@@ -552,7 +544,7 @@ export default function POS() {
         icon="pi pi-check"
         text
         onClick={() => {
-          updateOrder();
+          // updateOrder();
           setVisibleDiscountDialog(false);
         }}
       />
@@ -561,8 +553,190 @@ export default function POS() {
 
   const [order, setOrder] = useState<Demo.Order>(emptyOrder);
 
+  const updateOrder = useCallback(() => {
+    let somme_totale = 0;
+
+    // update order total
+    for (const element of orderProducts) {
+      somme_totale += element.total;
+    }
+    let _total =
+      order.discount > 0 ? somme_totale - order.discount : somme_totale;
+
+    setOrder({
+      ...order,
+      total: _total,
+      subTotal: somme_totale,
+      orderProducts: orderProducts,
+    });
+  }, [order, orderProducts]);
+
+  useEffect(() => {
+    setOrder({ ...order, orderProducts: orderProducts });
+    // Mise à jour de la commande ou autre action en fonction de la mise à jour de orderProducts
+    updateOrder();
+  }, [order, orderProducts, updateOrder]);
+
   const [visibleDiscountDialog, setVisibleDiscountDialog] = useState(false);
   const [visibleConfirmOrder, setVisibleConfirmOrder] = useState(false);
+
+  // !=================== CLIENT ==================
+
+  const [selectedClient, setSelectedCLient] = useState<Demo.Client | null>(
+    null
+  );
+
+  const [newClient, setNewClient] = useState<Demo.Client>(emptyClient);
+
+  const [loadingClients, setLoadingClient] = useState(true);
+  const [visibleNewClient, setVisibleNewClient] = useState<boolean>(false);
+
+  const [clients, setClients] = useState<Demo.Client[]>();
+
+  const getClients = useCallback(async () => {
+    try {
+      await axios
+        .post("/api/client", {
+          token: userInfo.token,
+        })
+        .then((res) => {
+          var result = res.data;
+          if (result.status === "success") {
+            setClients(result.data);
+          } else {
+            toastMessage("error", result.data);
+          }
+        });
+    } catch (error) {
+      console.log(error);
+    }
+
+    setLoadingClient(false);
+  }, [userInfo.token]);
+
+  const [loadingNewClient, setLoadingNewClient] = useState<boolean>(false);
+
+  const saveNewClient = () => {
+    setSubmittedClient(true);
+    if (
+      newClient.address.trim() &&
+      newClient.name.trim() &&
+      newClient.phone.trim()
+    ) {
+      setLoadingNewClient(true);
+
+      try {
+        axios
+          .post("/api/client/new", {
+            token: userInfo.token,
+            client: newClient,
+          })
+          .then((res) => {
+            var result = res.data;
+            if (result.status === "success") {
+              toastMessage("success", "Client enregistré avec succès.");
+              setVisibleNewClient(false);
+              setNewClient(emptyClient);
+              getClients();
+            } else {
+              toastMessage("error", result.data);
+            }
+          });
+      } catch (e) {
+        console.log(e);
+        toastMessage(
+          "error",
+          "Une erreur est survenue lors de l'enregistrement des clients."
+        );
+      }
+      setLoadingNewClient(false);
+    }
+  };
+
+  const newClientDialogFooter = (
+    <>
+      <Button
+        label="Enregistrer"
+        icon="pi pi-check"
+        text
+        onClick={() => saveNewClient()}
+        loading={loadingNewClient}
+      />
+    </>
+  );
+
+  const selectedClientTemplate = (option: Demo.Client, props: any) => {
+    if (option) {
+      return (
+        <div className="flex align-items-center">
+          <img
+            alt={option.name}
+            src="/user.png"
+            className={`mr-2`}
+            style={{ width: "18px" }}
+          />
+          <div>{option.name}</div>
+        </div>
+      );
+    }
+
+    return <span>{props.placeholder}</span>;
+  };
+
+  const clientOptionTemplate = (option: Demo.Client) => {
+    return (
+      <div className="flex align-items-center">
+        <img
+          alt={option.name}
+          src="/user.png"
+          className={`mr-2`}
+          style={{ width: "20px" }}
+        />
+        <div className="flex flex-column">
+          <span className="font-bold">{option.name}</span>
+          <span className="font-small">{option.phone}</span>
+        </div>
+      </div>
+    );
+  };
+
+  const panelFooterTemplate = () => {
+    return (
+      <div className="py-2 px-3">
+        {selectedClient ? (
+          <span>
+            <b>{selectedClient.name}</b> selectionné.
+          </span>
+        ) : (
+          "Aucun client selectionné."
+        )}
+      </div>
+    );
+  };
+
+  const [submittedClient, setSubmittedClient] = useState<boolean>(false);
+
+  const onInputNewClientChange = (value: any, name: string) => {
+    let _newClient: any = { ...newClient };
+    _newClient[`${name}`] = value;
+    setNewClient(_newClient);
+  };
+
+  const deleteProduct = (product: Demo.OrderProduct) => {
+    let _orderProducts = orderProducts.filter(
+      (val) => val.code !== product.code
+    );
+    setOrderProducts(_orderProducts);
+    // setOrder({ ...order, orderProducts: _orderProducts });
+    // console.log("Order: ", order);
+    // console.log("Order PRODUCTS: ", _orderProducts);
+    // updateOrder();
+    toastMessage("success", "Produit retiré avec succès.");
+  };
+
+  useEffect(() => {
+    getClients();
+  }, [getClients]);
 
   return (
     <div className="grid">
@@ -585,6 +759,40 @@ export default function POS() {
       </div>
 
       <div className="col-12 md:col-6">
+        <div className="card">
+          <div className="flex align-items-end">
+            <h5>Client</h5>
+            <Button
+              icon="pi pi-plus"
+              className="p-button-rounded p-button-primary ml-auto"
+              tooltip="Ajouter client"
+              tooltipOptions={{ position: "top" }}
+              onClick={() => setVisibleNewClient(true)}
+            />
+          </div>
+
+          <div className="grid formgrid p-fluid mt-2">
+            <div className="field mb-4 col-12">
+              <Dropdown
+                value={selectedClient}
+                onChange={(e: DropdownChangeEvent) => {
+                  setSelectedCLient(e.value);
+                  setClient(e.value);
+                  setOrder({ ...order, client: e.value });
+                }}
+                options={clients}
+                optionLabel="name"
+                placeholder="Choisir le client"
+                valueTemplate={selectedClientTemplate}
+                itemTemplate={clientOptionTemplate}
+                className="w-full"
+                panelFooterTemplate={panelFooterTemplate}
+                filter
+                disabled={loadingClients}
+              />
+            </div>
+          </div>
+        </div>
         <Panel
           headerTemplate={headerTemplate}
           footerTemplate={footerTemplate}
@@ -628,8 +836,7 @@ export default function POS() {
         </Panel>
       </div>
 
-      <div className="col-md:col-12"></div>
-      {/*  */}
+      {/* Products */}
       <Dialog
         header={"Liste de: " + category.category_name}
         position="top"
@@ -649,6 +856,7 @@ export default function POS() {
         >
           <Column field="cost" header="Image" body={imageBodyTemplate} />
 
+          <Column field="code" header="Code" sortable />
           <Column field="size" header="Taille" sortable />
           <Column field="color" header="Couleur" sortable />
           <Column field="type" header="Type" sortable />
@@ -670,7 +878,7 @@ export default function POS() {
         </DataTable>
       </Dialog>
 
-      {/* confirm Dialog */}
+      {/* INVOICE Dialog */}
       <Sidebar
         fullScreen
         visible={visibleConfirmOrder}
@@ -702,6 +910,7 @@ export default function POS() {
           </div>
         </div>
       </Dialog>
+
       {/* ORDERS dialog */}
       <Dialog
         header={"Configuration commande"}
@@ -736,13 +945,65 @@ export default function POS() {
             />
           </div>
           <div className="field mb-4 col-12">
-            <label htmlFor="quantity">Quantite</label>
+            <label htmlFor="quantity">Quantité</label>
             <InputNumber
               id="quantity"
               value={1}
-              placeholder="Entrer la quantite"
+              placeholder="Entrer la quantité"
               onValueChange={(e) => onInputChange(e.value, "quantity")}
               min={1}
+            />
+          </div>
+        </div>
+      </Dialog>
+
+      {/* New Client dialog */}
+      <Dialog
+        header={"Nouveau client"}
+        position="top"
+        visible={visibleNewClient}
+        style={{ width: "450px" }}
+        onHide={() => setVisibleNewClient(false)}
+        footer={newClientDialogFooter}
+      >
+        <div className="grid formgrid p-fluid mt-2">
+          <div className="field mb-4 col-12">
+            <label htmlFor="fullname">Prénom et Nom</label>
+            <InputText
+              id="fullname"
+              placeholder="Entrer le nom complet"
+              onChange={(e) => onInputNewClientChange(e.target.value, "name")}
+              className={classNames({
+                "p-invalid": submittedClient && !newClient.name,
+              })}
+            />
+          </div>
+
+          <div className="field mb-4 col-12">
+            <label htmlFor="phone">Télephone</label>
+            <InputMask
+              mask="9999-9999"
+              placeholder="****-****"
+              id="phone"
+              onChange={(e) => onInputNewClientChange(e.target.value, "phone")}
+              className={classNames({
+                "p-invalid": submittedClient && !newClient.phone,
+              })}
+            />
+          </div>
+
+          <div className="field mb-4 col-12">
+            <label htmlFor="address">Adresse</label>
+            <InputText
+              id="address"
+              value={newClient.address}
+              placeholder="Entrer l'adresse"
+              onChange={(e) =>
+                onInputNewClientChange(e.target.value, "address")
+              }
+              className={classNames({
+                "p-invalid": submittedClient && !newClient.address,
+              })}
             />
           </div>
         </div>

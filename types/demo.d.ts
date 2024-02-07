@@ -175,11 +175,13 @@ declare namespace Demo {
     id_client: number;
     name: string;
     phone: string;
-    address?: string;
+    address: string;
+    date: string;
   };
 
   type OrderProduct = {
-    id_order_product?: string;
+    id_order_product?: number;
+    id_product: string;
     id_order?: string;
     category: string;
     image?: string;
@@ -205,7 +207,6 @@ declare namespace Demo {
     date: string;
     code: string;
   };
-
 
   type Payment = {
     id_order?: number;
