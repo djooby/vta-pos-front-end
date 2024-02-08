@@ -93,8 +93,8 @@ const MainPage: React.FC = () => {
     subTotal: 0,
     discount: 0,
     total: 0,
-    date: "",
-    code: "",
+    date: fonctions.getCurrentDate(),
+    code: fonctions.generateId(6),
     status: "null",
   };
   const [order, setOrder] = useState<Demo.Order>(emptyOrder);
@@ -140,6 +140,7 @@ const MainPage: React.FC = () => {
 
   const handleSelectClient = (client: Demo.Client) => {
     setClient(client);
+    setOrder({ ...order, client: client });
     setIsVisibleDialogClient(false);
   };
 
@@ -159,6 +160,14 @@ const MainPage: React.FC = () => {
   const handleConfirmNewClient = (client: Demo.Client) => {
     setIsVisibleNewClient(false);
     setClient(client);
+  };
+
+  //! =================INVOICE =====================
+
+  const [visibleInvoice, setVisibleInvoice] = useState(false);
+
+  const handleProformaInvoice = () => {
+    setVisibleInvoice(true);
   };
 
   return (

@@ -9,6 +9,7 @@ import { Panel } from "primereact/panel";
 import { Toast } from "primereact/toast";
 import React, { useRef, useState } from "react";
 import DialogDiscount from "./dialogDiscount";
+import DialogInvoice from "./dialogInvoice";
 
 interface OrderProps {
   orderProducts: Demo.OrderProduct[];
@@ -90,14 +91,14 @@ const Order: React.FC<OrderProps> = ({
               outlined
               disabled={orderProducts.length === 0 || !client.id_client}
               onClick={() => {
-                // setVisibleConfirmOrder(true);
-                // console.log(client);
+                handleInvoice("PROFORMA");
+                console.log(order);
               }}
             ></Button>
 
             <Button
-              label="Cash"
-              icon="pi pi-money-bill"
+              label="Enregistrer"
+              icon="pi pi-save"
               disabled={orderProducts.length === 0 || !client.id_client}
               // onClick={() => setVisibleConfirmOrder(true)}
             ></Button>
@@ -180,6 +181,20 @@ const Order: React.FC<OrderProps> = ({
     setVisibleDiscountDialog(false);
   };
 
+  //! =================INVOICE =====================
+
+  const [visibleInvoice, setVisibleInvoice] = useState(false);
+  const [typeInvoice, setTypeInvoice] = useState<string>("");
+
+  const handleInvoice = (type: string) => {
+    setTypeInvoice(type);
+    setVisibleInvoice(true);
+  };
+
+  const handleCancelInvoice = () => {
+    setVisibleInvoice(false);
+  };
+
   return (
     <>
       <Toast ref={toast} />
@@ -232,6 +247,13 @@ const Order: React.FC<OrderProps> = ({
         onConfirm={handleConfirmDiscount}
         value={order?.discount as number}
         title="Ajouter discount"
+      />
+
+      <DialogInvoice
+        order={order as Demo.Order}
+        visible={visibleInvoice}
+        type={typeInvoice}
+        onCancel={handleCancelInvoice}
       />
     </>
   );
