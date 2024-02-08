@@ -197,7 +197,7 @@ declare namespace Demo {
 
   type Order = {
     id_oder?: string;
-    client: Client;
+    client?: Client;
     subTotal: number;
     discount: number;
     total: number;

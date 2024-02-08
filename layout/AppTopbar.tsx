@@ -32,6 +32,8 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
 
   const { userInfo } = useContext(UserContext);
 
+  const [loading, setLoading] = useState<boolean>(false);
+
   useEffect(() => {
     userInfo && userInfo.picture
       ? setImg(userInfo.picture)
@@ -59,13 +61,21 @@ const AppTopbar = forwardRef<AppTopbarRef>((props, ref) => {
         <ul className="topbar-menu">
           <li className="ml-3">
             <Button
+              loading={loading}
               type="button"
               icon="pi pi-shopping-bag"
               label="POS"
               rounded
               severity="success"
               className="flex-shrink-0"
-              onClick={() => router.push("/pos")}
+              onClick={() => {
+                setLoading(true);
+                setTimeout(() => {
+                  setLoading(false);
+                }, 2000);
+
+                router.push("/pos");
+              }}
             ></Button>
           </li>
 
