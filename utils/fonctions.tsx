@@ -95,7 +95,7 @@ class Fonctions {
 
     return prix.toLocaleString("en-US", {
       style: "currency",
-      currency: "USD",
+      currency: "HTG",
       minimumFractionDigits: 2,
     });
   };
@@ -132,6 +132,26 @@ class Fonctions {
       minLength: regexMinLength.test(password),
     };
   };
+
+  getInitials(fullName: string): string {
+    // Split the full name into parts using space as separator
+    const nameParts = fullName.split(" ");
+
+    // Initialize a variable to store initials
+    let initials = "";
+
+    // Iterate over the name parts
+    for (const part of nameParts) {
+      // Check if the part is not empty
+      if (part.length > 0) {
+        // Add the first letter in uppercase to the initials string
+        initials += part[0].toUpperCase();
+      }
+    }
+
+    // Return the first two initials
+    return initials.substring(0, 2);
+  }
 }
 
 // eslint-disable-next-line import/no-anonymous-default-export

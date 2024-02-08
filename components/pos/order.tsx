@@ -164,8 +164,15 @@ const Order: React.FC<OrderProps> = ({
   const handleConfirmDiscount = (discount: number) => {
     setVisibleDiscountDialog(false);
     if (discount > 0) {
-      onDiscount(discount);
-      toastMessage("success", "Discount ajouté avec succès!");
+      if ((order?.total && discount > order?.total) || !order?.total) {
+        toastMessage(
+          "error",
+          "Discount ne peut pas etre ajouté dans un panier vide!"
+        );
+      } else {
+        onDiscount(discount);
+        toastMessage("success", "Discount ajouté avec succès!");
+      }
     }
   };
 

@@ -1,12 +1,28 @@
 "use client";
 import CategoryList from "@/components/pos/categoriesList";
+import ClientPos from "@/components/pos/client";
 import DialogCategoryProducts from "@/components/pos/dialogCategoryProducts";
+import DialogClientList from "@/components/pos/dialogClientList";
+import DialogNewClient from "@/components/pos/dialogNewClient";
 import DialogOrderProduct from "@/components/pos/dialogOrderProduct";
 import Order from "@/components/pos/order";
 import { Demo } from "@/types";
 import fonctions from "@/utils/fonctions";
-import React, { useEffect, useState } from "react";
+import { Button } from "primereact/button";
+import { Toast } from "primereact/toast";
+import React, { useEffect, useRef, useState } from "react";
 const MainPage: React.FC = () => {
+  const toast = useRef<Toast | null>(null);
+  const toastMessage = (status: any, message: string) => {
+    var summary = status == "error" ? "Erreur!" : "Succès!";
+
+    toast.current?.show({
+      severity: status,
+      summary: summary,
+      detail: message,
+      life: 3000,
+    });
+  };
   const [
     selectedCategory,
     setSelectedCategory,
@@ -114,12 +130,59 @@ const MainPage: React.FC = () => {
       setOrder({ ...order, discount: discount });
     }
   };
+  // !========= CLIENT ===========================
+
+  const [isVisibleDialogClient, setIsVisibleDialogClient] = useState<boolean>(
+    false
+  );
+
+  const [isVisibleNewClient, setIsVisibleNewClient] = useState<boolean>(false);
+
+  const handleSelectClient = (client: Demo.Client) => {
+    setClient(client);
+    setIsVisibleDialogClient(false);
+  };
+
+  const handleCancelDialogClient = () => {
+    setIsVisibleDialogClient(false);
+  };
+
+  const handleNewClient = () => {
+    setIsVisibleDialogClient(false);
+    setIsVisibleNewClient(true);
+  };
+
+  const handleCancelNewDialogClient = () => {
+    setIsVisibleNewClient(false);
+  };
+
+  const handleConfirmNewClient = (client: Demo.Client) => {
+    setIsVisibleNewClient(false);
+    setClient(client);
+  };
+
   return (
     <div className="grid">
       <div className="col-12 md:col-6">
         <CategoryList onCategorySelect={handleCategorySelect} />
       </div>
       <div className="col-12 md:col-6">
+        <div className=" card">
+          <div className="flex align-items-center justify-content-between mb-3">
+            <div className="text-900 text-xl font-semibold">Client</div>
+            <Button
+              type="button"
+              icon="pi pi-plus"
+              label="Choisir client"
+              outlined
+              size="small"
+              onClick={() => setIsVisibleDialogClient(true)}
+            ></Button>
+          </div>
+
+          <ClientPos client={client} />
+        </div>
+
         <Order
           orderProducts={orderProducts}
           order={order}
@@ -130,7 +193,7 @@ const MainPage: React.FC = () => {
       </div>
 
       <DialogCategoryProducts
-        visivle={isDialogCategoryProducts}
+        visible={isDialogCategoryProducts}
         title="Liste des articles"
         onCancel={cancelDialogCategoryProducts}
         onConfirm={handleProductSelect}
@@ -138,11 +201,26 @@ const MainPage: React.FC = () => {
       />
 
       <DialogOrderProduct
-        visivle={isDialogOrderProduct}
+        visible={isDialogOrderProduct}
         title="Configuration commande"
         onCancel={cancelDialogOrderProduct}
         onConfirm={handleProductOrder}
         data={product}
+      />
+
+      <DialogClientList
+        newClient={handleNewClient}
+        visible={isVisibleDialogClient}
+        title="Choisir client"
+        onConfirm={handleSelectClient}
+        onCancel={handleCancelDialogClient}
+      />
+
+      <DialogNewClient
+        visible={isVisibleNewClient}
+        onCancel={handleCancelNewDialogClient}
+        title="Ajouter client"
+        onConfirm={handleConfirmNewClient}
       />
     </div>
   );

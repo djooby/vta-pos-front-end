@@ -9,7 +9,7 @@ import { classNames } from "primereact/utils";
 import { useEffect, useRef, useState } from "react";
 
 interface DialogOrderProduct {
-  visivle: boolean;
+  visible: boolean;
   title: string;
   onConfirm: (product: Demo.OrderProduct) => void;
   onCancel: () => void;
@@ -102,7 +102,7 @@ const DialogOrderProduct: React.FC<DialogOrderProduct> = (props) => {
       <Toast ref={toast} />
       <Dialog
         position="top"
-        visible={props.visivle}
+        visible={props.visible}
         header={props.title + ": " + props.data?.code}
         onHide={props.onCancel}
         className="max-h-screen"

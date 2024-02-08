@@ -10,7 +10,7 @@ import { Toast } from "primereact/toast";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
 interface DialogCategoryProductsProps {
-  visivle: boolean;
+  visible: boolean;
   title: string;
   onConfirm: (product: Demo.Product) => void;
   onCancel: () => void;
@@ -139,7 +139,7 @@ const DialogCategoryProducts: React.FC<DialogCategoryProductsProps> = (
   return (
     <Dialog
       position="top"
-      visible={props.visivle}
+      visible={props.visible}
       header={props.title + ": " + props.data?.category_name}
       onHide={props.onCancel}
       className="max-h-screen"

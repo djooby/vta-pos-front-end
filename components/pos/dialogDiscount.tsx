@@ -3,7 +3,6 @@ import { Button } from "primereact/button";
 import { Dialog } from "primereact/dialog";
 import { InputNumber } from "primereact/inputnumber";
 import { Toast } from "primereact/toast";
-import { classNames } from "primereact/utils";
 import { useEffect, useRef, useState } from "react";
 
 interface DiscountProps {
@@ -30,11 +29,9 @@ const DialogDiscount: React.FC<DiscountProps> = (props) => {
   const [submitted, setSubmitted] = useState<boolean>(false);
 
   const saveDiscount = () => {
-    setSubmitted(true);
+    props.onConfirm(discount as number);
 
-    if (discount && discount > 0) {
-      props.onConfirm(discount);
-    }
+    setDiscount(0);
   };
 
   const dialogFooter = (
@@ -62,6 +59,7 @@ const DialogDiscount: React.FC<DiscountProps> = (props) => {
     <>
       <Toast ref={toast} />
       <Dialog
+        style={{ width: "450px" }}
         position="top"
         visible={props.visible}
         header={props.title}
@@ -77,10 +75,6 @@ const DialogDiscount: React.FC<DiscountProps> = (props) => {
               value={discount}
               placeholder="Entrer le disocunt"
               onValueChange={(e) => e.value && setDiscount(e.value)}
-              className={classNames({
-                "p-invalid": submitted && !discount,
-              })}
-              min={1}
             />
           </div>
         </div>
