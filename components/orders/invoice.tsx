@@ -45,9 +45,9 @@ const Invoice = ({ order, type }: { type: string; order: Demo.Order }) => {
 
         <div className="mt-5 mb-8 flex flex-column">
           <div className="mb-3 text-2xl font-medium">CLIENT</div>
-          <span className="mb-2">{order.client.name}</span>
-          <span className="mb-2">{order.client.phone}</span>
-          <span>{order.client.address}</span>
+          <span className="mb-2">{order.client?.name}</span>
+          <span className="mb-2">{order.client?.phone}</span>
+          <span>{order.client?.address}</span>
         </div>
 
         <div className="overflow-x-auto">
