@@ -158,8 +158,9 @@ const MainPage: React.FC = () => {
   };
 
   const handleConfirmNewClient = (client: Demo.Client) => {
-    setIsVisibleNewClient(false);
     setClient(client);
+    setOrder({ ...order, client: client });
+    setIsVisibleNewClient(false);
   };
 
   return (
