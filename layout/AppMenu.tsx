@@ -64,6 +64,19 @@ const AppMenu = () => {
 
     {
       visible: role === "Super Admin" ? true : false,
+      label: "Commande",
+      icon: "pi pi-fw pi-truck",
+      items: [
+        {
+          label: "Liste des commandes",
+          icon: "pi pi-fw pi-truck",
+          to: "/order",
+        },
+      ],
+    },
+
+    {
+      visible: role === "Super Admin" ? true : false,
       label: "Paramètre",
       icon: "pi pi-fw pi-building",
       items: [

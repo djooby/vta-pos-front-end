@@ -1,13 +1,16 @@
 "use client";
 
+import { UserContext } from "@/layout/context/usercontext";
 import { Demo } from "@/types";
 import fonctions from "@/utils/fonctions";
+import axios from "axios";
+import { useRouter } from "next/navigation";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Panel } from "primereact/panel";
 import { Toast } from "primereact/toast";
-import React, { useRef, useState } from "react";
+import React, { useContext, useRef, useState } from "react";
 import DialogDiscount from "./dialogDiscount";
 import DialogInvoice from "./dialogInvoice";
 
@@ -26,6 +29,7 @@ const Order: React.FC<OrderProps> = ({
   remove,
   onDiscount,
 }) => {
+  const { userInfo } = useContext(UserContext);
   const toast = useRef<Toast | null>(null);
 
   const toastMessage = (status: any, message: string) => {
@@ -97,10 +101,11 @@ const Order: React.FC<OrderProps> = ({
             ></Button>
 
             <Button
+              loading={loading}
               label="Enregistrer"
               icon="pi pi-save"
               disabled={orderProducts.length === 0 || !client.id_client}
-              // onClick={() => setVisibleConfirmOrder(true)}
+              onClick={() => saveOrder()}
             ></Button>
           </li>
         </ul>
@@ -193,6 +198,37 @@ const Order: React.FC<OrderProps> = ({
 
   const handleCancelInvoice = () => {
     setVisibleInvoice(false);
+  };
+  // !================SAVE ORDER=====================
+
+  const router = useRouter();
+  const [loading, setLoading] = useState<boolean>(false);
+  const saveOrder = async () => {
+    setLoading(true);
+    const dataApi = {
+      order: order,
+      token: userInfo.token,
+    };
+
+    console.log(dataApi);
+
+    try {
+      await axios.post("/api/order/add", dataApi).then((res) => {
+        const result = res.data;
+        if (result.status === "success") {
+          toastMessage("success", "Commande enregistrée avec succès!");
+          router.push("/order/overview/" + order?.code);
+        } else {
+          setLoading(false);
+          toastMessage("error", result.data);
+        }
+      });
+    } catch (e) {
+      setLoading(false);
+
+      console.log(e);
+      toastMessage("error", "Erreur lors de l'enregistrement de la commande.");
+    }
   };
 
   return (

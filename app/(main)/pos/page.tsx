@@ -162,14 +162,6 @@ const MainPage: React.FC = () => {
     setClient(client);
   };
 
-  //! =================INVOICE =====================
-
-  const [visibleInvoice, setVisibleInvoice] = useState(false);
-
-  const handleProformaInvoice = () => {
-    setVisibleInvoice(true);
-  };
-
   return (
     <div className="grid">
       <div className="col-12 md:col-6">
