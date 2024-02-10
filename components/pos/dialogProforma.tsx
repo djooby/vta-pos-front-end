@@ -1,26 +1,25 @@
 import { Demo } from "@/types";
 import { Sidebar } from "primereact/sidebar";
-import Invoice from "../orders/invoice";
+import Proforma from "../order/proforma";
 
-interface DialogInvoiceProps {
+interface DialogProformaProps {
   visible: boolean;
   order: Demo.Order;
   type: string;
   onCancel: () => void;
 }
 
-const DialogInvoice: React.FC<DialogInvoiceProps> = ({
+const DialogProforma: React.FC<DialogProformaProps> = ({
   order,
   visible,
   onCancel,
   type,
-}: DialogInvoiceProps) => {
+}: DialogProformaProps) => {
   return (
     <Sidebar visible={visible} position="top" onHide={onCancel} fullScreen>
-      <Invoice order={order} type={type} />
+      <Proforma order={order} />
     </Sidebar>
   );
 };
 
-
-export default DialogInvoice;
+export default DialogProforma;

@@ -143,6 +143,7 @@ const DialogCategoryProducts: React.FC<DialogCategoryProductsProps> = (
       header={props.title + ": " + props.data?.category_name}
       onHide={props.onCancel}
       className="max-h-screen"
+      style={{ width: "100vw" }}
     >
       <DataTable
         loading={loadingProducts}

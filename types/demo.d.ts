@@ -196,7 +196,7 @@ declare namespace Demo {
   };
 
   type Order = {
-    id_oder?: string;
+    id_order?: string;
     client?: Client;
     subTotal: number;
     discount: number;
@@ -209,19 +209,11 @@ declare namespace Demo {
   };
 
   type Payment = {
+    id_payment?: number;
     id_order?: number;
-    name: string;
     amount: number;
-    paid?: boolean;
+    created_by?: string;
     date: string;
-  };
-
-  // PhotoService
-  type Photo = {
-    title: string;
-    itemImageSrc?: string | undefined;
-    thumbnailImageSrc?: string | undefined;
-    alt?: string | undefined;
   };
 
   // IconService

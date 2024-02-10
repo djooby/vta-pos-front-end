@@ -107,6 +107,7 @@ const DialogOrderProduct: React.FC<DialogOrderProduct> = (props) => {
         onHide={props.onCancel}
         className="max-h-screen"
         footer={dialogFooter}
+        style={{ width: "100vw" }}
       >
         <div className="grid formgrid p-fluid mt-2">
           <div className="field mb-4 col-12">

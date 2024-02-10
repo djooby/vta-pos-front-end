@@ -112,7 +112,6 @@ const DialogClientList: React.FC<ClientProps> = (props) => {
     <>
       <Toast ref={toast} />
       <Dialog
-      
         position="top"
         visible={props.visible}
         header={props.title}

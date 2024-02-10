@@ -6,12 +6,12 @@ import { Button } from "primereact/button";
 import { useRef } from "react";
 import ReactToPrint from "react-to-print";
 
-const Invoice = ({ order, type }: { type: string; order: Demo.Order }) => {
+const Proforma = ({ order }: { order: Demo.Order }) => {
   const printRef = useRef<HTMLDivElement>(null);
 
   return (
     <>
-      <div className="card py-8 px-6 md:px-8 overflow-auto" ref={printRef}>
+      <div className="card py-2 px-6 md:px-8 overflow-auto" ref={printRef}>
         <div className="flex align-items-end flex-row md:align-items-end justify-content-between border-bottom-1 surface-border pb-5 min-w-max">
           <div className="flex flex-column">
             <Image src={"/logo/icon.png"} width={90} height={90} alt="Logo" />
@@ -24,7 +24,7 @@ const Invoice = ({ order, type }: { type: string; order: Demo.Order }) => {
           </div>
           <div className="flex flex-column mt-5 md:mt-0">
             <div className="text-2xl font-semibold text-left md:text-right mb-3">
-              {type}
+              PROFORMA
             </div>
             <div className="flex flex-column">
               <div className="flex justify-content-between align-items-center mb-2">
@@ -32,18 +32,14 @@ const Invoice = ({ order, type }: { type: string; order: Demo.Order }) => {
                 <span>{fonctions.dateFormatDMY(order.date)}</span>
               </div>
               <div className="flex justify-content-between align-items-center mb-2">
-                <span className="font-semibold mr-6">INVOICE #</span>
+                <span className="font-semibold mr-6">NUMERO</span>
                 <span>{order.code}</span>
-              </div>
-              <div className="flex justify-content-between align-items-center">
-                <span className="font-semibold mr-6">STATUT</span>
-                <span>{order.status}</span>
               </div>
             </div>
           </div>
         </div>
 
-        <div className="mt-5 mb-8 flex flex-column">
+        <div className="mt-2 mb-4 flex flex-column">
           <div className="mb-3 text-2xl font-medium">CLIENT</div>
           <span className="mb-2">{order.client?.name}</span>
           <span className="mb-2">{order.client?.phone}</span>
@@ -105,7 +101,7 @@ const Invoice = ({ order, type }: { type: string; order: Demo.Order }) => {
           </table>
         </div>
 
-        <div className="flex flex-row align-items-start justify-content-between mt-8">
+        <div className="flex flex-row align-items-start justify-content-between mt-5 mb-4">
           <div className="font-semibold mb-3 md:mb-0">NOTES</div>
           <div className="flex flex-column">
             <div className="flex justify-content-between align-items-center mb-2">
@@ -134,7 +130,7 @@ const Invoice = ({ order, type }: { type: string; order: Demo.Order }) => {
                 <Button label="Imprimer" icon="pi pi-print" className="mr-2" />
               )}
               content={() => printRef.current}
-              documentTitle="Invoice"
+              documentTitle="Proforma"
             />
           </div>
         </div>
@@ -142,4 +138,4 @@ const Invoice = ({ order, type }: { type: string; order: Demo.Order }) => {
     </>
   );
 };
-export default Invoice;
+export default Proforma;

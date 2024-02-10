@@ -12,7 +12,7 @@ import { Panel } from "primereact/panel";
 import { Toast } from "primereact/toast";
 import React, { useContext, useRef, useState } from "react";
 import DialogDiscount from "./dialogDiscount";
-import DialogInvoice from "./dialogInvoice";
+import DialogInvoice from "./dialogProforma";
 
 interface OrderProps {
   orderProducts: Demo.OrderProduct[];

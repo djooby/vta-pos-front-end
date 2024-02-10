@@ -119,7 +119,7 @@ const CategoryList: React.FC<CategoryListProps> = ({ onCategorySelect }) => {
 
   const itemTemplate = (category: Demo.Category) => {
     return (
-      <div className="col-12 lg:col-3">
+      <div className="col-6 lg:col-3">
         <div className="card m-3 border-1 p-2 surface-border">
           <div className="flex flex-wrap gap-2 align-items-center justify-content-end mb-2">
             <span

@@ -128,75 +128,78 @@ export default function Order() {
   };
 
   return (
-    <div className="col-12">
-      <Toast ref={toast} />
+    <>
+      <div className="col-12">
+        <Toast ref={toast} />
 
-      <div className="card">
-        <div className="flex flex-column md:flex-row md:align-items-start md:justify-content-between mb-3">
-          <div className="text-900 text-xl font-semibold mb-3 md:mb-0">
-            Commande
+        <div className="card">
+          <div className="flex flex-column md:flex-row md:align-items-start md:justify-content-between mb-3">
+            <div className="text-900 text-xl font-semibold mb-3 md:mb-0">
+              Commande
+            </div>
+            <div className="inline-flex align-items-center">
+              <span className="hiddens p-input-icon-left flex-auto">
+                <i className="pi pi-search"></i>
+                <InputText
+                  type={"text"}
+                  value={globalFilterValue}
+                  onChange={onGlobalFilterChange}
+                  placeholder="Rechercher"
+                  style={{ borderRadius: "2rem" }}
+                  className="w-full"
+                />
+              </span>
+            </div>
           </div>
-          <div className="inline-flex align-items-center">
-            <span className="hiddens p-input-icon-left flex-auto">
-              <i className="pi pi-search"></i>
-              <InputText
-                type={"text"}
-                value={globalFilterValue}
-                onChange={onGlobalFilterChange}
-                placeholder="Rechercher"
-                style={{ borderRadius: "2rem" }}
-                className="w-full"
-              />
-            </span>
-          </div>
+          <DataTable
+            loading={loading}
+            dataKey="id_order"
+            paginator
+            rows={10}
+            className="datatable-responsive"
+            value={orders}
+            emptyMessage="Aucun résultat."
+            responsiveLayout="scroll"
+            globalFilter={globalFilterValue}
+            filters={filters}
+          >
+            <Column field="code" header="Code" sortable />
+            <Column field="" header="Client" sortable body={clientTemplate} />
+            <Column field="date" header="Date" sortable />
+            <Column field="deliveryDate" header="Livraison" sortable />
+            <Column
+              field="total"
+              header="Total"
+              sortable
+              body={(rowData) => priceBodyTemplate(rowData.total)}
+            />
+
+            <Column
+              field="subTotal"
+              header="Sous-Total"
+              sortable
+              body={(rowData) => priceBodyTemplate(rowData.subTotal)}
+            />
+            <Column
+              field="discount"
+              header="Discount"
+              sortable
+              body={(rowData) => priceBodyTemplate(rowData.discount)}
+            />
+            <Column field="created_by" header="Créé par" sortable />
+            <Column
+              header="Action"
+              headerStyle={{
+                minWidth: "10rem",
+                maxWidth: "16rem",
+                width: "10rem",
+              }}
+              body={actionBodyTemplate}
+            />
+          </DataTable>
         </div>
-        <DataTable
-          loading={loading}
-          dataKey="id_category"
-          paginator
-          rows={10}
-          className="datatable-responsive"
-          value={orders}
-          emptyMessage="Aucun résultat."
-          responsiveLayout="scroll"
-          globalFilter={globalFilterValue}
-          filters={filters}
-        >
-          <Column field="code" header="Code" sortable />
-          <Column field="" header="Client" sortable body={clientTemplate} />
-          <Column field="date" header="Date" sortable />
-          <Column field="deliveryDate" header="Livraison" sortable />
-          <Column
-            field="total"
-            header="Total"
-            sortable
-            body={(rowData) => priceBodyTemplate(rowData.total)}
-          />
-
-          <Column
-            field="subTotal"
-            header="Sous-Total"
-            sortable
-            body={(rowData) => priceBodyTemplate(rowData.subTotal)}
-          />
-          <Column
-            field="discount"
-            header="Discount"
-            sortable
-            body={(rowData) => priceBodyTemplate(rowData.discount)}
-          />
-          <Column field="created_by" header="Créé par" sortable />
-          <Column
-            header="Action"
-            headerStyle={{
-              minWidth: "10rem",
-              maxWidth: "16rem",
-              width: "10rem",
-            }}
-            body={actionBodyTemplate}
-          />
-        </DataTable>
       </div>
-    </div>
+
+    </>
   );
 }
