@@ -27,8 +27,23 @@ export function middleware(req: NextRequest) {
     return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 
+  //! category Page
+  if (path.startsWith("/category") && !allowedToAdminOnly.includes(role)) {
+    return NextResponse.redirect(new URL("/auth/login", req.url));
+  }
+
   //! Employee Page
   if (path.startsWith("/employee") && !allowedToSuperAdminOnly.includes(role)) {
+    return NextResponse.redirect(new URL("/auth/login", req.url));
+  }
+
+  //! order Page
+  if (path.startsWith("/order") && !allowedToAdminOnly.includes(role)) {
+    return NextResponse.redirect(new URL("/auth/login", req.url));
+  }
+
+  //! POS Page
+  if (path.startsWith("/pos") && !allowedAllRoles.includes(role)) {
     return NextResponse.redirect(new URL("/auth/login", req.url));
   }
 }

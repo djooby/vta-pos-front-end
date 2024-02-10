@@ -117,7 +117,20 @@ export default function OrderDetail({
     }
   }, [getOrder, userInfo]);
 
-  const actionList = ["Traiement en cours", "Pret", "Delivré"];
+  function setActionPossible(status: string): string {
+    switch (status) {
+      case "En attente":
+        return "Traitement en cours";
+      case "Traitement en cours":
+        return "Prêt";
+      case "Prêt":
+        return "Livré";
+      default:
+        return "";
+    }
+  }
+
+  const actionList = [setActionPossible(order.status as string)];
 
   const [selectedAction, setSelectedAction] = useState<string | null>(null);
 
@@ -184,10 +197,60 @@ export default function OrderDetail({
   const [avance, setAvance] = useState<number>(0);
   const [balance, setBalance] = useState<number>(0);
 
+  const [loadindAction, setLoadingAction] = useState(false);
+
+  const updateStatus = async (action: any) => {
+    setLoadingAction(true);
+    let data: any;
+    if (action === "Traitement en cours") {
+      data = {
+        id_order: order.id_order,
+        products: order.orderProducts,
+        data: {
+          status: "Traitement en cours",
+        },
+      };
+    } else {
+      data = {
+        id_order: order.id_order,
+        data: {
+          status: action,
+        },
+      };
+    }
+
+    const dataApi = {
+      token: userInfo.token,
+      data: data,
+    };
+    // check action
+    if (action === "Livré" && balance !== 0) {
+      toastMessage("error", "Montant de paiement manquant");
+      console.log(action);
+    } else {
+      try {
+        await axios.post("/api/order/update", dataApi).then((res) => {
+          const result = res.data;
+          if (result.status === "success") {
+            toastMessage("success", result.data);
+            getOrder();
+          } else {
+            toastMessage("error", result.data);
+          }
+        });
+      } catch (e) {
+        console.log(e);
+        toastMessage("error", "Erreur lors de la mise à jour du statut.");
+      }
+    }
+
+    setSelectedAction(null);
+    setLoadingAction(false);
+  };
+
   return (
     <>
       <Toast ref={toast} />
-
       <div className="col-12">
         <div className="grid">
           <div className="col-12 md:col-8">
@@ -204,20 +267,32 @@ export default function OrderDetail({
           </div>
 
           <div className="col-12 md:col-4">
-            <div className="card flex justify-content-between">
-              <Button
-                label="Ajouter Paiement"
-                outlined
-                onClick={() => setIsPaymentVisible(true)}
-              />
-              <Dropdown
-                value={selectedAction}
-                options={actionList}
-                placeholder="Action"
-                onChange={(e) => setSelectedAction(e.value)}
-              />
-            </div>
-            <div className="card mt-5">
+            {balance !== 0 || order.status !== "Livré" && (
+              <div className="card flex justify-content-between mb-5">
+                {balance > 0 && (
+                  <Button
+                    label="Ajouter Paiement"
+                    outlined
+                    onClick={() => setIsPaymentVisible(true)}
+                  />
+                )}
+
+                {order.status !== "Livré" && (
+                  <Dropdown
+                  disabled={loadindAction}
+                    value={selectedAction}
+                    options={actionList}
+                    placeholder="Action"
+                    onChange={(e) => {
+                      setSelectedAction(e.value);
+                      updateStatus(e.value);
+                    }}
+                  />
+                )}
+              </div>
+            )}
+
+            <div className="card">
               <h5>Historique de paiement</h5>
               <DataTable
                 loading={loadingPayments}
@@ -227,7 +302,12 @@ export default function OrderDetail({
                 emptyMessage="Aucun paiement."
               >
                 <Column field="date" header="Date" sortable />
-                <Column field="amount" header="Amount" sortable />
+                <Column
+                  field="amount"
+                  header="Amount"
+                  sortable
+                  body={(rowData) => fonctions.formatCurrency(rowData.amount)}
+                />
                 <Column field="created_by" header="Par" sortable />
               </DataTable>
             </div>
