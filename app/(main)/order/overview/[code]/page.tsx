@@ -267,7 +267,7 @@ export default function OrderDetail({
           </div>
 
           <div className="col-12 md:col-4">
-            {balance !== 0 || order.status !== "Livré" && (
+            {(balance !== 0 || order.status !== "Livré") && (
               <div className="card flex justify-content-between mb-5">
                 {balance > 0 && (
                   <Button
@@ -279,7 +279,7 @@ export default function OrderDetail({
 
                 {order.status !== "Livré" && (
                   <Dropdown
-                  disabled={loadindAction}
+                    disabled={loadindAction}
                     value={selectedAction}
                     options={actionList}
                     placeholder="Action"
