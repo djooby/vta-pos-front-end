@@ -216,6 +216,21 @@ declare namespace Demo {
     date: string;
   };
 
+  type Employee = {
+    id_employee?: string;
+    first_name: string;
+    last_name: string;
+    email: string;
+    phone: string;
+    poste: string;
+    role: string;
+    salary: number;
+    address: string;
+    date: string;
+    image?: string;
+    password?: string;
+  };
+
   // IconService
   type Icon = {
     icon?: {

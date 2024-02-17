@@ -1,3 +1,4 @@
+import { useRouter } from "next/navigation";
 import { Sidebar } from "primereact/sidebar";
 import { useContext } from "react";
 import { LayoutContext } from "./context/layoutcontext";
@@ -14,9 +15,11 @@ const AppProfileSidebar = () => {
     }));
   };
 
+  const router = useRouter();
+
   const logOut = () => {
+    router.push("/auth/login");
     deleteUser();
-    window.location.href = "/auth/login";
   };
 
   return (
@@ -47,12 +50,12 @@ const AppProfileSidebar = () => {
             </a>
           </li>
 
-          <li>
+          <li onClick={() => logOut()}>
             <a className="cursor-pointer flex surface-border mb-3 p-3 align-items-center border-1 surface-border border-round hover:surface-hover transition-colors transition-duration-150">
               <span>
                 <i className="pi pi-power-off text-xl text-primary"></i>
               </span>
-              <div className="ml-3" onClick={() => logOut()}>
+              <div className="ml-3">
                 <span className="mb-2 font-semibold">Se Déconnecter</span>
                 <p className="text-color-secondary m-0">Fermer votre session</p>
               </div>

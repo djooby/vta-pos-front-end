@@ -207,7 +207,7 @@ export default function OrderDetail({
         id_order: order.id_order,
         products: order.orderProducts,
         data: {
-          status: "Traitement en cours",
+          status: action,
         },
       };
     } else {

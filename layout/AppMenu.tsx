@@ -6,11 +6,11 @@ import { UserContext } from "./context/usercontext";
 
 const AppMenu = () => {
   const { userInfo } = useContext(UserContext);
-  const [role, setRole] = useState("Super Admin");
+  const [role, setRole] = useState("User");
 
   useEffect(() => {
     if (userInfo.role) {
-      setRole(userInfo.role);
+      userInfo.role !== "User" && setRole(userInfo.role);
     }
   }, [userInfo.role]);
 
@@ -27,29 +27,10 @@ const AppMenu = () => {
         },
       ],
     },
-    {
-      visible: role === "Super Admin" || role === "Admin" ? true : false,
-      label: "Produit",
-      icon: "pi pi-send",
-      items: [
-        {
-          label: "Ajouter produit",
-          icon: "pi pi-fw pi-plus",
-          to: "/product/new",
-          visible: role === "Super Admin" || role === "Admin" ? true : false,
-        },
-
-        {
-          label: "Liste des produits",
-          icon: "pi pi-fw pi-box",
-          to: "/product",
-          visible: role === "Super Admin" || role === "Admin" ? true : false,
-        },
-      ],
-    },
 
     {
       visible: role === "Super Admin" || role === "Admin" ? true : false,
+
       label: "Categorie",
       icon: "pi pi-th-large",
       items: [
@@ -57,13 +38,31 @@ const AppMenu = () => {
           label: "Liste des catégories",
           icon: "pi pi-fw pi-th-large",
           to: "/category",
-          visible: role === "Super Admin" || role === "Admin" ? true : false,
+          visible: true,
+        },
+      ],
+    },
+    {
+      visible: true,
+      label: "Produit",
+      icon: "pi pi-send",
+      items: [
+        {
+          label: "Ajouter produit",
+          icon: "pi pi-fw pi-plus",
+          to: "/product/new",
+        },
+
+        {
+          label: "Liste des produits",
+          icon: "pi pi-fw pi-box",
+          to: "/product",
         },
       ],
     },
 
     {
-      visible: role === "Super Admin" ? true : false,
+      visible: true,
       label: "Commande",
       icon: "pi pi-fw pi-truck",
       items: [
@@ -76,14 +75,25 @@ const AppMenu = () => {
     },
 
     {
-      visible: role === "Super Admin" ? true : false,
       label: "Paramètre",
-      icon: "pi pi-fw pi-building",
+      icon: "pi pi-fw pi-cog",
       items: [
         {
           label: "Gestion employé",
-          icon: "pi pi-fw pi-users",
-          to: "/employee",
+          icon: "pi pi-fw pi-user-edit",
+          items: [
+            {
+              label: "Ajouter employé",
+              icon: "pi pi-fw pi-user-plus",
+              to: "/employee/new",
+            },
+            {
+              label: "Liste des employés",
+              icon: "pi pi-fw pi-users",
+              to: "/employee",
+            },
+          ],
+          // to: "/employee",
         },
       ],
     },
