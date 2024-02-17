@@ -75,6 +75,7 @@ const AppMenu = () => {
     },
 
     {
+      visible: role === "Super Admin" || role === "Admin" ? true : false,
       label: "Paramètre",
       icon: "pi pi-fw pi-cog",
       items: [
