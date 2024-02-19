@@ -50,7 +50,7 @@ export default function Profile() {
   const [loading, setLoading] = useState(false);
   const [employee, setEmployee] = useState<Demo.Employee>(emptyEmployee);
 
-  const role = ["Admin", "Secretary", "User"];
+  const role = ["Non définie", "User", "Secretary", "Admin"];
 
   const onInputChange = (e: any, name: any) => {
     const val = (e.target && e.target.value) || "";

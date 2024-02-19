@@ -9,6 +9,9 @@ import { FilterMatchMode } from "primereact/api";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable, DataTableFilterMeta } from "primereact/datatable";
+import { Dropdown } from "primereact/dropdown";
+import { InputMask } from "primereact/inputmask";
+import { InputNumber } from "primereact/inputnumber";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import { Tooltip } from "primereact/tooltip";
@@ -66,6 +69,8 @@ export default function Employee() {
 
   const [employee, setEmployee] = useState<Demo.Employee>(emptyEmployee);
 
+  const [selectedRole, setSelectedRole] = useState<string | null>(null);
+
   const getEmployees = useCallback(async () => {
     setLoading(true);
     try {
@@ -109,6 +114,112 @@ export default function Employee() {
         // onClick={() => confirmDeleteCategory(rowData)}
       />
     );
+  };
+
+  const role = ["Non définie", "User", "Secretary", "Admin"];
+  const [submitted, setSubmitted] = useState(false);
+
+  const onRowEditComplete = async (e: any) => {
+    setSubmitted(false);
+    setLoading(true);
+    let _employee = [...employees];
+    let { newData, index } = e;
+    _employee[index] = newData;
+
+    if (
+      newData.first_name === "" ||
+      newData.last_name === "" ||
+      newData.email === "" ||
+      newData.phone === "" ||
+      newData.poste === "" ||
+      newData.role === "" ||
+      newData.address === ""
+    ) {
+      toastMessage("error", "Veuillez remplir tous les champs");
+      setLoading(false);
+      return;
+    } else {
+      // ?modifier l employe
+      const dataToApi = {
+        token: userInfo.token,
+        new_employee: newData,
+      };
+
+      try {
+        await axios.post("/api/employee/update", dataToApi).then((res) => {
+          const result = res.data;
+          if (result.status === "success") {
+            toastMessage("success", result.data);
+            setEmployees(_employee);
+          } else {
+            toastMessage("error", result.data);
+          }
+        });
+      } catch (e) {
+        toastMessage(
+          "error",
+          "Une erreur est survenue lors de la modification"
+        );
+        console.log(e);
+      }
+      setSubmitted(false);
+    }
+
+    setLoading(false);
+  };
+
+  const textEditor = (options: any) => {
+    return (
+      <InputText
+        type="text"
+        value={options.value}
+        onChange={(e) => options.editorCallback(e.target.value)}
+      />
+    );
+  };
+
+  const phoneEditor = (options: any) => {
+    return (
+      <InputMask
+        id="phone"
+        value={options.value}
+        mask="9999-9999"
+        placeholder="9999-9999"
+        onChange={(e) => options.editorCallback(e.target.value)}
+      />
+    );
+  };
+
+  const salaryEditor = (options: any) => {
+    return (
+      <InputNumber
+        type="text"
+        value={options.value}
+        mode="currency"
+        currency="HTG"
+        locale="fr-HT"
+        min={0}
+        onChange={(e) => options.editorCallback(e.value)}
+      />
+    );
+  };
+
+  const roleEditor = (options: any) => {
+    return (
+      <Dropdown
+        id="role"
+        value={selectedRole}
+        onChange={(e) => {
+          setSelectedRole(e.value);
+        }}
+        options={role}
+        placeholder="Choisir le niveau d'acces"
+      />
+    );
+  };
+
+  const onRowEditInit = (e: any) => {
+    setSelectedRole(e.data.role);
   };
 
   return (
@@ -155,15 +266,67 @@ export default function Employee() {
           responsiveLayout="scroll"
           globalFilter={globalFilterValue}
           filters={filters}
+          editMode="row"
+          onRowEditComplete={onRowEditComplete}
+          onRowEditInit={onRowEditInit}
         >
-          <Column field="first_name" header="Prénom" sortable />
-          <Column field="last_name" header="Nom" sortable />
-          <Column field="email" header="Email" sortable />
-          <Column field="phone" header="Téléphone" sortable />
-          <Column field="poste" header="Poste" sortable />
-          <Column field="role" header="Role" sortable />
-          <Column field="salary" header="Salaire" sortable />
-          <Column field="address" header="Adresse" sortable />
+          <Column
+            field="first_name"
+            header="Prénom"
+            editor={(options: any) => textEditor(options)}
+            sortable
+          />
+          <Column
+            field="last_name"
+            header="Nom"
+            editor={(options: any) => textEditor(options)}
+            sortable
+          />
+          <Column
+            field="email"
+            header="Email"
+            editor={(options: any) => textEditor(options)}
+            sortable
+          />
+          <Column
+            field="phone"
+            header="Téléphone"
+            editor={(options: any) => phoneEditor(options)}
+            sortable
+          />
+          <Column
+            field="poste"
+            header="Poste"
+            editor={(options: any) => textEditor(options)}
+            sortable
+          />
+          <Column
+            field="role"
+            header="Role"
+            editor={(options: any) => roleEditor(options)}
+            sortable
+          />
+          <Column
+            field="salary"
+            header="Salaire"
+            editor={(options: any) => salaryEditor(options)}
+            sortable
+          />
+          <Column
+            field="address"
+            header="Adresse"
+            editor={(options: any) => textEditor(options)}
+            sortable
+          />
+          <Column
+            rowEditor
+            headerStyle={{
+              minWidth: "7rem",
+              maxWidth: "7rem",
+              width: "7rem",
+            }}
+            bodyStyle={{ textAlign: "center" }}
+          />
           <Column
             header="Action"
             headerStyle={{
