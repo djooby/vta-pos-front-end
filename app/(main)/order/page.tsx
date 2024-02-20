@@ -1,6 +1,6 @@
 "use client";
 
-import ClientPos from "@/components/pos/client";
+import ClientPos from "@/components/client/client";
 import { LayoutContext } from "@/layout/context/layoutcontext";
 import { UserContext } from "@/layout/context/usercontext";
 import { Demo } from "@/types";
@@ -199,7 +199,6 @@ export default function Order() {
           </DataTable>
         </div>
       </div>
-
     </>
   );
 }

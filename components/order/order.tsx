@@ -11,8 +11,8 @@ import { DataTable } from "primereact/datatable";
 import { Panel } from "primereact/panel";
 import { Toast } from "primereact/toast";
 import React, { useContext, useRef, useState } from "react";
-import DialogDiscount from "./dialogDiscount";
-import DialogInvoice from "./dialogProforma";
+import DialogDiscount from "../pos/dialogDiscount";
+import DialogInvoice from "../pos/dialogProforma";
 
 interface OrderProps {
   orderProducts: Demo.OrderProduct[];

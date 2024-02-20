@@ -42,6 +42,21 @@ const AppMenu = () => {
         },
       ],
     },
+
+    {
+      visible: role === "Super Admin" || role === "Admin" ? true : false,
+
+      label: "Internet",
+      icon: "pi pi-th-large",
+      items: [
+        {
+          label: "Abonnement internet",
+          icon: "pi pi-fw pi-globe",
+          to: "/internet",
+          visible: true,
+        },
+      ],
+    },
     {
       visible: true,
       label: "Produit",
@@ -94,7 +109,6 @@ const AppMenu = () => {
               to: "/employee",
             },
           ],
-          // to: "/employee",
         },
       ],
     },

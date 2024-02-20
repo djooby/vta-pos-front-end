@@ -1,11 +1,11 @@
 "use client";
+import ClientPos from "@/components/client/client";
+import DialogClientList from "@/components/client/dialogClientList";
+import DialogNewClient from "@/components/client/dialogNewClient";
+import DialogOrderProduct from "@/components/order/dialogOrderProduct";
+import Order from "@/components/order/order";
 import CategoryList from "@/components/pos/categoriesList";
-import ClientPos from "@/components/pos/client";
 import DialogCategoryProducts from "@/components/pos/dialogCategoryProducts";
-import DialogClientList from "@/components/pos/dialogClientList";
-import DialogNewClient from "@/components/pos/dialogNewClient";
-import DialogOrderProduct from "@/components/pos/dialogOrderProduct";
-import Order from "@/components/pos/order";
 import { Demo } from "@/types";
 import fonctions from "@/utils/fonctions";
 import { Button } from "primereact/button";

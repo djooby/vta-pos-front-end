@@ -1,4 +1,4 @@
-import { format, parse } from "date-fns";
+import { add, format, parse } from "date-fns";
 import { fr } from "date-fns/locale";
 
 interface SerieEntry {
@@ -151,6 +151,19 @@ class Fonctions {
 
     // Return the first two initials
     return initials.substring(0, 2);
+  }
+
+  add30Days(date: string): string {
+    // Ajouter 30 jours à la date de l'API
+    const nouvelleDate = add(date, { days: 30 });
+
+    // Formater la nouvelle date dans le même format que la date d'entrée de l'API
+    const formatDate = format(nouvelleDate, "yyyy-MM-dd");
+    return formatDate;
+  }
+
+  convertDateToDMY(date: Date): string {
+    return format(date, "yyyy-MM-dd");
   }
 }
 

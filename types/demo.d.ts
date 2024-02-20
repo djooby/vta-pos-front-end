@@ -231,6 +231,18 @@ declare namespace Demo {
     password?: string;
   };
 
+  type Subscription = {
+    id_subcription?: string;
+    id_client?: string;
+    client?: string;
+    start_date: string;
+    end_date: string;
+    price: number;
+    status: string;
+    created_date?: string;
+    created_by?: string;
+  };
+
   // IconService
   type Icon = {
     icon?: {

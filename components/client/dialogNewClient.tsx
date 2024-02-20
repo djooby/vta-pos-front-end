@@ -59,7 +59,6 @@ const DialogNewClient: React.FC<NewClientProps> = (props) => {
       newClient.phone.trim()
     ) {
       // save via API
-
       try {
         axios
           .post("/api/client/new", {
