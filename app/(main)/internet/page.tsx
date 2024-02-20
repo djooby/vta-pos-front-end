@@ -45,7 +45,6 @@ export default function Internet() {
 
   const { userInfo } = useContext(UserContext);
 
-  const [clients, setClients] = useState<Demo.Client[]>([]);
   const [subscriptions, setSubscriptions] = useState<Demo.Subscription[]>([]);
   const [client, setClient] = useState<Demo.Client>();
   const [loading, setLoading] = useState(false);

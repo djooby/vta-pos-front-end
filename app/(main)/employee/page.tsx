@@ -211,6 +211,7 @@ export default function Employee() {
         value={selectedRole}
         onChange={(e) => {
           setSelectedRole(e.value);
+          options.editorCallback(e.value);
         }}
         options={role}
         placeholder="Choisir le niveau d'acces"
