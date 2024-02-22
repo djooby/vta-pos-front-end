@@ -202,7 +202,6 @@ const DialogNewSubscription: React.FC<NewSubscriptionProps> = (props) => {
               value={selectedClient}
               onChange={(e: DropdownChangeEvent) => {
                 setSelectedCLient(e.value);
-                props.onConfirm(e.value);
               }}
               options={clients}
               optionLabel="name"

@@ -4,6 +4,7 @@ import DialogNewSubscription from "@/components/subscription/dialogNewSubscripti
 import { LayoutContext } from "@/layout/context/layoutcontext";
 import { UserContext } from "@/layout/context/usercontext";
 import { Demo } from "@/types";
+import fonctions from "@/utils/fonctions";
 import axios from "axios";
 import { FilterMatchMode } from "primereact/api";
 import { Button } from "primereact/button";
@@ -98,6 +99,15 @@ export default function Internet() {
     initFilters();
   }, [getSubscriptions]);
 
+  const priceBodyTemplate = (price: any) => {
+    return (
+      <>
+        <span className="p-column-title">Prix</span>
+        {fonctions.formatCurrency(price)}
+      </>
+    );
+  };
+
   return (
     <div className="grid">
       <div className="col-12 card">
@@ -152,11 +162,15 @@ export default function Internet() {
           editMode="row"
         >
           <Column field="client" header="Client" />
-          <Column field="client" header="Date Debut" />
-          <Column field="client" header="Date Fin" />
-          <Column field="client" header="Date Prix" />
-          <Column field="client" header="Statut" />
-          <Column field="client" header="Cree par" />
+          <Column field="start_date" header="Date Début" />
+          <Column field="end_date" header="Date Fin" />
+          <Column
+            field="price"
+            body={(rowData) => priceBodyTemplate(rowData.price)}
+            header="Date Prix"
+          />
+          <Column field="status" header="Statut" />
+          <Column field="created_by" header="Créé par" />
         </DataTable>
       </div>
       <DialogNewClient
