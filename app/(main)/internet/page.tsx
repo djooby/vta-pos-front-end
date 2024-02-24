@@ -32,6 +32,7 @@ export default function Internet() {
   };
   const handeleConfirmNewClient = (newClient: Demo.Client) => {
     setClient(newClient);
+    setIsVisibleDialogClient(false);
   };
 
   const [isVisibleDialogSubs, setIsVisibleDialogSubs] = useState(false);
