@@ -131,13 +131,27 @@ declare namespace Demo {
     image: string;
     created_by: string;
     date: string;
-    product_quantity: number;
+    quantity: number;
     products?: Product[];
   };
 
-  //ProductService
   type Product = {
-    id_product?: string;
+    id_product: string;
+    id_sub_category: string;
+    product_name: string;
+    type: string;
+    price: number;
+    image: string;
+  };
+  type ProductImages = {
+    id_product_images?: string;
+    id_product: string;
+    url: string;
+  };
+
+  //ProductService
+  type SubCategory = {
+    id_sub_product?: string;
     code: string;
     category: string;
     color: string;

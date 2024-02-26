@@ -1,10 +1,10 @@
 import Link from "next/link";
+import { Image } from "primereact/image";
 import { useContext } from "react";
+import { LayoutState } from "../types/layout";
 import AppMenu from "./AppMenu";
 import { LayoutContext } from "./context/layoutcontext";
 import { MenuProvider } from "./context/menucontext";
-import { LayoutState } from "../types/layout";
-import { Image } from "primereact/image";
 
 const AppSidebar = () => {
   const { setLayoutState } = useContext(LayoutContext);
@@ -22,7 +22,7 @@ const AppSidebar = () => {
             src="/logo/icon.png"
             alt="Logo"
             className="app-logo-normal"
-            width="150"
+            width="80"
           />
           <Image
             src="/logo/icon.png"

@@ -39,11 +39,11 @@ export default function Categories() {
 
   const { userInfo } = useContext(UserContext);
 
-  let emptyCategory = {
+  let emptyCategory: Demo.Category = {
     id_category: "",
     category_name: "",
     image: "",
-    product_quantity: 0,
+    quantity: 0,
     created_by: userInfo.fullname,
     date: fonctions.getCurrentDate(),
   };
@@ -164,14 +164,15 @@ export default function Categories() {
       <>
         {rowData.product_quantity !== "0" && (
           <Button
-            icon="pi pi-list"
+            icon="pi pi-arrow-right"
             rounded
             className="mb-2 mr-2"
             type="button"
+            outlined
             tooltip="Liste produits"
             tooltipOptions={{ position: "top" }}
             onClick={() =>
-              router.push("/category/products/" + rowData.id_category)
+              router.push("/category/sub_category/" + rowData.id_category)
             }
           />
         )}
@@ -179,6 +180,7 @@ export default function Categories() {
         <Button
           icon="pi pi-trash"
           severity="danger"
+          outlined
           rounded
           className="mb-2"
           type="button"
@@ -212,7 +214,7 @@ export default function Categories() {
   );
 
   const hideNewDialog = () => {
-    setIsDeleteDialog(false);
+    setIsNewDialog(false);
   };
 
   const saveCategory = async () => {
@@ -369,7 +371,7 @@ export default function Categories() {
       {/* Modal New Category */}
       <Dialog
         visible={isNewDialog}
-        header="Ajouter Categorie"
+        header="Ajouter Catégorie"
         modal
         style={{ width: "450px" }}
         footer={newDialogFooter}

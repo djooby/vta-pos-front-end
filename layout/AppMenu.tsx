@@ -31,21 +31,6 @@ const AppMenu = () => {
     {
       visible: role === "Super Admin" || role === "Admin" ? true : false,
 
-      label: "Categorie",
-      icon: "pi pi-th-large",
-      items: [
-        {
-          label: "Liste des catégories",
-          icon: "pi pi-fw pi-th-large",
-          to: "/category",
-          visible: true,
-        },
-      ],
-    },
-
-    {
-      visible: role === "Super Admin" || role === "Admin" ? true : false,
-
       label: "Internet",
       icon: "pi pi-th-large",
       items: [
@@ -57,10 +42,45 @@ const AppMenu = () => {
         },
       ],
     },
+
     {
-      visible: true,
+      visible: role === "Super Admin" || role === "Admin" ? true : false,
+
+      label: "Catégorie",
+      icon: "pi pi-th-large",
+      items: [
+        {
+          label: "Liste des catégories",
+          icon: "pi pi-fw pi-th-large",
+          to: "/category",
+          visible: true,
+        },
+
+        {
+          label: "Sous-catégories",
+          icon: "pi pi-fw pi-hashtag",
+          // to: "/sub_category",
+          visible: true,
+          items: [
+            {
+              label: "Ajouter",
+              icon: "pi pi-fw pi-plus",
+              to: "/sub_category/new",
+            },
+            {
+              label: "Lister",
+              icon: "pi pi-fw pi-list",
+              to: "/sub_category",
+            },
+          ],
+        },
+      ],
+    },
+
+    {
+      visible: false,
       label: "Produit",
-      icon: "pi pi-send",
+      icon: "pi pi-box",
       items: [
         {
           label: "Ajouter produit",
