@@ -124,10 +124,10 @@ const CategoryList: React.FC<CategoryListProps> = ({ onCategorySelect }) => {
           <div className="flex flex-wrap gap-2 align-items-center justify-content-end mb-2">
             <span
               className={`product-badge status-${getInventoryStatus(
-                category.product_quantity
+                category.quantity
               ).toLowerCase()}`}
             >
-              {category.product_quantity}
+              {category.quantity}
             </span>
           </div>
           <div className="flex flex-column align-items-center text-center mb-3">

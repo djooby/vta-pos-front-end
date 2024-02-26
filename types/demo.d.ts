@@ -136,6 +136,7 @@ declare namespace Demo {
   };
 
   type Product = {
+    subCategory?: SubCategory;
     id_product: string;
     id_sub_category: string;
     product_name: string;

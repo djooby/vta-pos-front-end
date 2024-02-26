@@ -97,8 +97,8 @@ const DialogCategoryProducts: React.FC<DialogCategoryProductsProps> = (
   };
 
   const statusBodyTemplate = (rowData: Demo.Product) => {
-    var qte = rowData.quantity && rowData.quantity?.toString();
-    var alerte = rowData.alert_quantity && rowData.alert_quantity?.toString();
+    var qte = rowData.subCategory?.quantity && rowData.subCategory?.quantity?.toString();
+    var alerte = rowData.subCategory?.alert_quantity && rowData.subCategory?.alert_quantity?.toString();
     var status = "INSTOCK";
 
     if (qte !== 0 && qte != undefined && alerte != 0 && alerte != undefined) {

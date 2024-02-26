@@ -36,11 +36,11 @@ const DialogOrderProduct: React.FC<DialogOrderProduct> = (props) => {
 
     if (orderProduct.price > 0 && orderProduct.quantity > 0) {
       orderProduct.total = orderProduct.price * orderProduct.quantity;
-      orderProduct.category = props.data?.category as string;
-      orderProduct.code = props.data?.code as string;
-      orderProduct.color = props.data?.color as string;
-      orderProduct.size = props.data?.size as string;
-      orderProduct.type = props.data?.type as string;
+      orderProduct.category = props.data?.subCategory?.category as string;
+      orderProduct.code = props.data?.subCategory?.code as string;
+      orderProduct.color = props.data?.subCategory?.color as string;
+      orderProduct.size = props.data?.subCategory?.size as string;
+      orderProduct.type = props.data?.subCategory?.type as string;
       toastMessage("success", "Article ajouté avec succès.");
       props.onConfirm(orderProduct);
     }
@@ -80,12 +80,12 @@ const DialogOrderProduct: React.FC<DialogOrderProduct> = (props) => {
     if (props.data) {
       setOrderProduct({
         id_product: props.data?.id_product as string,
-        category: props.data?.category as string,
-        size: props.data?.size as string,
-        color: props.data?.color as string,
+        category: props.data?.subCategory?.category as string,
+        size: props.data?.subCategory?.size as string,
+        color: props.data?.subCategory?.color as string,
         service: selectedService,
         quantity: 1,
-        price: props.data?.sale_price as number,
+        price: props.data?.subCategory?.sale_price as number,
         total: 0,
       });
     }
@@ -103,7 +103,7 @@ const DialogOrderProduct: React.FC<DialogOrderProduct> = (props) => {
       <Dialog
         position="top"
         visible={props.visible}
-        header={props.title + ": " + props.data?.code}
+        header={props.title + ": " + props.data?.subCategory?.code}
         onHide={props.onCancel}
         className="max-h-screen"
         footer={dialogFooter}
