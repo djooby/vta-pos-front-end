@@ -142,10 +142,10 @@ const DialogCategoryProducts: React.FC<DialogCategoryProductsProps> = (
     <Dialog
       position="top"
       visible={props.visible}
-      header={props.title + ": " + props.data?.category_name}
+      header={props.data?.category_name}
       onHide={props.onCancel}
       className="max-h-screen"
-      style={{ width: "100vw" }}
+      style={{ maxWidth: "100vw", minWidth: "375px" }}
     >
       <DataTable
         loading={loadingProducts}

@@ -59,8 +59,8 @@ const DialogOrderProduct: React.FC<DialogOrderProduct> = (props) => {
     </>
   );
 
-  const listeService = ["Normal", "Personnalisé"];
-  const [selectedService, setSelectedService] = useState<string>("Normal");
+  const listeService = ["Simple", "Personnalisé"];
+  const [selectedService, setSelectedService] = useState<string>("Simple");
 
   let emptyOrderProduct: Demo.OrderProduct = {
     id_product: "",
@@ -103,11 +103,11 @@ const DialogOrderProduct: React.FC<DialogOrderProduct> = (props) => {
       <Dialog
         position="top"
         visible={props.visible}
-        header={props.title + ": " + props.data?.code}
+        header={"Code: " + props.data?.code}
         onHide={props.onCancel}
         className="max-h-screen"
         footer={dialogFooter}
-        style={{ width: "100vw" }}
+        style={{ width: "375px" }}
       >
         <div className="grid formgrid p-fluid mt-2">
           <div className="field mb-4 col-12">

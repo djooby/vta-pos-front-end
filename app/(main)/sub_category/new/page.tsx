@@ -148,7 +148,6 @@ export default function Profile() {
     if (
       subCategory.code.trim() &&
       subCategory.category.trim() &&
-      subCategory.cost > 0 &&
       subCategory.quantity > 0
     ) {
       setLoading(true);
@@ -314,7 +313,7 @@ export default function Profile() {
               )}
             </div>
 
-            <div className="field mb-4 col-12 md:col-3">
+            <div className="field mb-4 col-12 md:col-3 hidden">
               <label htmlFor="cost" className="font-medium text-900">
                 Prix d&apos;achat *
               </label>
@@ -356,7 +355,7 @@ export default function Profile() {
               )}
             </div>
 
-            <div className="field mb-4 col-12 md:col-3">
+            <div className="field mb-4 col-12 md:col-4">
               <label htmlFor="quantity" className="font-medium text-900">
                 Quantité *
               </label>
@@ -377,7 +376,7 @@ export default function Profile() {
               )}
             </div>
 
-            <div className="field mb-4 col-12 md:col-3">
+            <div className="field mb-4 col-12 md:col-4">
               <label htmlFor="alert_quantity" className="font-medium text-900">
                 Alerte quantité *
               </label>
@@ -397,7 +396,7 @@ export default function Profile() {
               )}
             </div>
 
-            <div className="field mb-4 col-12 md:col-3">
+            <div className="field mb-4 col-12 md:col-4">
               <label htmlFor="type" className="font-medium text-900">
                 Type
               </label>
