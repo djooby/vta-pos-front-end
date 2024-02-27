@@ -162,7 +162,7 @@ export default function Categories() {
   const actionBodyTemplate = (rowData: any) => {
     return (
       <>
-        {rowData.product_quantity !== "0" && (
+        {rowData.quantity !== "0" && (
           <Button
             icon="pi pi-arrow-right"
             rounded
@@ -329,7 +329,7 @@ export default function Categories() {
           filters={filters}
         >
           <Column field="category_name" header="Nom" sortable />
-          <Column field="product_quantity" header="Qté d'articles" sortable />
+          <Column field="quantity" header="Qté d'articles" sortable />
           <Column field="created_by" header="Créé par" sortable />
 
           <Column field="date" header="Date" sortable />

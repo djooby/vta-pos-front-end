@@ -53,10 +53,10 @@ const MainPage: React.FC = () => {
   const [isDialogCategoryProducts, setIsDialogCategoryProducts] = useState(
     false
   );
-  const [product, setProduct] = useState<Demo.Product | null>(null);
+  const [subCategory, setSubCategory] = useState<Demo.SubCategory | null>(null);
 
-  const handleProductSelect = (product: Demo.Product) => {
-    setProduct(product);
+  const handleProductSelect = (subCategory: Demo.SubCategory) => {
+    setSubCategory(subCategory);
     setIsDialogCategoryProducts(false);
     setIsDialogOrderProduct(true);
   };
@@ -207,7 +207,7 @@ const MainPage: React.FC = () => {
         title="Configuration commande"
         onCancel={cancelDialogOrderProduct}
         onConfirm={handleProductOrder}
-        data={product}
+        data={subCategory}
       />
 
       <DialogClientList

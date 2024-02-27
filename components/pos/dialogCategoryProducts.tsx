@@ -12,7 +12,7 @@ import { useCallback, useContext, useEffect, useRef, useState } from "react";
 interface DialogCategoryProductsProps {
   visible: boolean;
   title: string;
-  onConfirm: (product: Demo.Product) => void;
+  onConfirm: (product: Demo.SubCategory) => void;
   onCancel: () => void;
   data: Demo.Category | null;
 }
@@ -36,7 +36,7 @@ const DialogCategoryProducts: React.FC<DialogCategoryProductsProps> = (
     });
   };
 
-  const getCategoryProducts = useCallback(
+  const getSubCategories = useCallback(
     async (id_category: string) => {
       setLoadingProducts(true);
       const dataToapi = {
@@ -45,14 +45,16 @@ const DialogCategoryProducts: React.FC<DialogCategoryProductsProps> = (
       };
 
       try {
-        await axios.post("/api/category/products", dataToapi).then((res) => {
-          const result = res.data;
-          if (result.status === "success") {
-            setProducts(result.data.products);
-          } else {
-            toastMessage("error", result.data);
-          }
-        });
+        await axios
+          .post("/api/category/sub_category", dataToapi)
+          .then((res) => {
+            const result = res.data;
+            if (result.status === "success") {
+              setProducts(result.data.sub_category);
+            } else {
+              toastMessage("error", result.data);
+            }
+          });
       } catch (e) {
         toastMessage(
           "error",
@@ -68,11 +70,11 @@ const DialogCategoryProducts: React.FC<DialogCategoryProductsProps> = (
 
   useEffect(() => {
     if (props.data) {
-      getCategoryProducts(props.data.id_category);
+      getSubCategories(props.data.id_category);
     }
-  }, [getCategoryProducts, props.data]);
+  }, [getSubCategories, props.data]);
 
-  const imageBodyTemplate = (rowData: Demo.Product) => {
+  const imageBodyTemplate = (rowData: Demo.SubCategory) => {
     return rowData.image ? (
       <>
         <span className="p-column-title">Image</span>
@@ -96,9 +98,9 @@ const DialogCategoryProducts: React.FC<DialogCategoryProductsProps> = (
     );
   };
 
-  const statusBodyTemplate = (rowData: Demo.Product) => {
-    var qte = rowData.subCategory?.quantity && rowData.subCategory?.quantity?.toString();
-    var alerte = rowData.subCategory?.alert_quantity && rowData.subCategory?.alert_quantity?.toString();
+  const statusBodyTemplate = (rowData: Demo.SubCategory) => {
+    var qte = rowData?.quantity && rowData.quantity?.toString();
+    var alerte = rowData.alert_quantity && rowData.alert_quantity?.toString();
     var status = "INSTOCK";
 
     if (qte !== 0 && qte != undefined && alerte != 0 && alerte != undefined) {
@@ -119,7 +121,7 @@ const DialogCategoryProducts: React.FC<DialogCategoryProductsProps> = (
     );
   };
 
-  const actionBodyTemplate = (rowData: Demo.Product) => {
+  const actionBodyTemplate = (rowData: Demo.SubCategory) => {
     return (
       <>
         <Button
