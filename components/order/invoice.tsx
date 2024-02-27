@@ -42,7 +42,7 @@ const Invoice = ({
                 <span>{fonctions.dateFormatDMY(order.date)}</span>
               </div>
               <div className="flex justify-content-between align-items-center mb-2">
-                <span className="font-semibold mr-6">INVOICE #</span>
+                <span className="font-semibold mr-6">NUMERO</span>
                 <span>{order.code}</span>
               </div>
               <div className="flex justify-content-between align-items-center">

@@ -38,7 +38,7 @@ export default function Home() {
         if (result.status === "success") {
           // Extraction des catégories et des quantités dans des tableaux
           var categories: string[] = result.data.map(
-            (item: any) => item.category
+            (item: any) => item.category_name
           );
           var quantities: number[] = result.data.map((item: any) =>
             parseInt(item.quantity)

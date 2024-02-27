@@ -1,7 +1,6 @@
 "use client";
 
 import ClientPos from "@/components/client/client";
-import { LayoutContext } from "@/layout/context/layoutcontext";
 import { UserContext } from "@/layout/context/usercontext";
 import { Demo } from "@/types";
 import fonctions from "@/utils/fonctions";
@@ -56,7 +55,6 @@ export default function Order() {
 
   const [filters, setFilters] = useState<DataTableFilterMeta>({});
   const [globalFilterValue, setGlobalFilterValue] = useState("");
-  const { layoutConfig } = useContext(LayoutContext);
 
   const onGlobalFilterChange: React.ChangeEventHandler<HTMLInputElement> = (
     e
@@ -87,25 +85,29 @@ export default function Order() {
     return (
       <>
         <Button
-          icon="pi pi-list"
+          icon="pi pi-arrow-right"
           rounded
           className="mb-2 mr-2"
           type="button"
           tooltip="Voir detail"
+          outlined
           tooltipOptions={{ position: "top" }}
           onClick={() => router.push("/order/overview/" + rowData.code)}
         />
 
-        <Button
-          icon="pi pi-trash"
-          severity="danger"
-          rounded
-          className="mb-2"
-          type="button"
-          tooltip="Supprimer"
-          tooltipOptions={{ position: "top" }}
-          // onClick={() => confirmDeleteCategory(rowData)}
-        />
+        {userInfo.role === "Super Admin" && (
+          <Button
+            icon="pi pi-trash"
+            severity="danger"
+            rounded
+            outlined
+            className="mb-2"
+            type="button"
+            tooltip="Supprimer"
+            tooltipOptions={{ position: "top" }}
+            // onClick={() => confirmDeleteCategory(rowData)}
+          />
+        )}
       </>
     );
   };

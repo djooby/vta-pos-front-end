@@ -162,32 +162,32 @@ export default function Categories() {
   const actionBodyTemplate = (rowData: any) => {
     return (
       <>
-        {rowData.quantity !== "0" && (
+        <Button
+          icon="pi pi-arrow-right"
+          rounded
+          className="mb-2 mr-2"
+          type="button"
+          outlined
+          tooltip="Sous-catégories"
+          tooltipOptions={{ position: "top" }}
+          onClick={() =>
+            router.push("/category/sub_category/" + rowData.id_category)
+          }
+        />
+
+        {userInfo.role === "Super Admin" && (
           <Button
-            icon="pi pi-arrow-right"
-            rounded
-            className="mb-2 mr-2"
-            type="button"
+            icon="pi pi-trash"
+            severity="danger"
             outlined
-            tooltip="Liste produits"
+            rounded
+            className="mb-2"
+            type="button"
+            tooltip="Supprimer"
             tooltipOptions={{ position: "top" }}
-            onClick={() =>
-              router.push("/category/sub_category/" + rowData.id_category)
-            }
+            onClick={() => confirmDeleteCategory(rowData)}
           />
         )}
-
-        <Button
-          icon="pi pi-trash"
-          severity="danger"
-          outlined
-          rounded
-          className="mb-2"
-          type="button"
-          tooltip="Supprimer"
-          tooltipOptions={{ position: "top" }}
-          onClick={() => confirmDeleteCategory(rowData)}
-        />
       </>
     );
   };
@@ -264,7 +264,7 @@ export default function Categories() {
         severity="secondary"
         className="p-button-text"
         text
-        onClick={hideDeleteCategoryDialog}
+        onClick={hideNewDialog}
       />
       <Button
         label="Oui"
@@ -329,7 +329,12 @@ export default function Categories() {
           filters={filters}
         >
           <Column field="category_name" header="Nom" sortable />
-          <Column field="quantity" header="Qté d'articles" sortable />
+          <Column
+            field="quantity"
+            header="Qté d'articles"
+            style={{ textAlign: "right", width: "2rem" }}
+            sortable
+          />
           <Column field="created_by" header="Créé par" sortable />
 
           <Column field="date" header="Date" sortable />
