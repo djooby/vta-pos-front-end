@@ -7,11 +7,21 @@ import axios from "axios";
 import { useRouter } from "next/navigation";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
-import { Dropdown } from "primereact/dropdown";
+import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
 import { Toast } from "primereact/toast";
 import { classNames } from "primereact/utils";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
+
+interface GroupItem {
+  label: string;
+  value: string;
+}
+
+interface GroupType {
+  label: string;
+  items: GroupItem[];
+}
 
 export default function Profile() {
   const { layoutConfig } = useContext(LayoutContext);
@@ -82,22 +92,139 @@ export default function Profile() {
     "Violet",
   ];
 
-  const sizeShirt = ["Youth", "XS", "S", "M", "L", "XL", "XXL", "XXXL"];
-  const sizeCup = ["11 oz", "13 oz", "15 oz"];
-  const sizeTumbler = ["18 oz", "20 oz", "30 oz", "15 oz"];
   const typeCup = [
     "Argent",
     "Avec cuillère",
+    "Avec manche",
     "Avec tête",
-    "Gluten",
+    "Gluter",
     "Gris",
     "Magique",
     "Manche en argent",
     "Manche en or",
     "Or",
     "Personnalisé",
+    "Sans manche",
     "Simple",
   ];
+
+  const sizeAll: GroupType[] = [
+    {
+      label: "Maillot",
+      items: [
+        { label: "Youth", value: "Youth" },
+        { label: "XS", value: "XS" },
+        { label: "S", value: "S" },
+        { label: "M", value: "M" },
+        { label: "L", value: "L" },
+        { label: "XL", value: "XL" },
+        { label: "XXL", value: "XXL" },
+        { label: "XXXL", value: "XXXL" },
+      ],
+    },
+
+    {
+      label: "Once",
+      items: [
+        { label: "11 oz", value: "11 oz" },
+        { label: "12 oz", value: "11 oz" },
+        { label: "13 oz", value: "11 oz" },
+        { label: "14 oz", value: "11 oz" },
+        { label: "15 oz", value: "11 oz" },
+        { label: "16 oz", value: "11 oz" },
+        { label: "18 oz", value: "11 oz" },
+        { label: "20 oz", value: "11 oz" },
+        { label: "30 oz", value: "11 oz" },
+      ],
+    },
+  ];
+
+  const typeAll: GroupType[] = [
+    {
+      label: "Thermos",
+      items: [
+        { label: "Argent", value: "Argent" },
+        { label: "Avec cuillère", value: "Avec cuillère" },
+        { label: "Avec manche", value: "Avec manche" },
+        { label: "Avec tête", value: "Avec tête" },
+        { label: "Gluter", value: "Gluter" },
+        { label: "Gris", value: "Gris" },
+        { label: "Magique", value: "Magique" },
+        { label: "Manche en argent", value: "Manche en argent" },
+        { label: "Manche en or", value: "Manche en or" },
+        { label: "Or", value: "Or" },
+        { label: "Personnalisé", value: "Personnalisé" },
+        { label: "Sans manche", value: "Sans manche" },
+        { label: "Simple", value: "Simple" },
+      ],
+    },
+
+    {
+      label: "Case iPhone",
+      items: [
+        { label: "iPhone 6", value: "iPhone 6" },
+        { label: "iPhone 7-8", value: "iPhone 7-8" },
+        { label: "iPhone 7-8 plus", value: "iPhone 7-8 plus" },
+        { label: "iPhone XS", value: "iPhone XS" },
+        { label: "iPhone XR", value: "iPhone XR" },
+        { label: "iPhone XM", value: "iPhone XM" },
+        { label: "iPhone 11", value: "iPhone 11" },
+        { label: "iPhone 11 Pro", value: "iPhone 11 Pro" },
+        { label: "iPhone 11 Pro Max", value: "iPhone 11 Pro Max" },
+        { label: "iPhone 12", value: "iPhone 12" },
+        { label: "iPhone 12 Mini", value: "iPhone 12 Mini" },
+        { label: "iPhone 12 Pro", value: "iPhone 12 Pro" },
+        { label: "iPhone 12 Pro Max", value: "iPhone 12 Pro Max" },
+        { label: "iPhone 13", value: "iPhone 13" },
+        { label: "iPhone 13 Mini", value: "iPhone 13 Mini" },
+        { label: "iPhone 13 Pro", value: "iPhone 13 Pro" },
+        { label: "iPhone 13 Pro Max ", value: "iPhone 13 Pro Max" },
+        { label: "iPhone 14", value: "iPhone 14" },
+        { label: "iPhone 14 Mini", value: "iPhone 14 Mini" },
+        { label: "iPhone 14 Pro", value: "iPhone 14 Pro" },
+        { label: "iPhone 14 Pro Max", value: "iPhone 14 Pro Max" },
+        { label: "iPhone 15", value: "iPhone 15" },
+        { label: "iPhone 15 Mini", value: "iPhone 15 Mini" },
+        { label: "iPhone 15 Pro", value: "iPhone 15 Pro" },
+        { label: "iPhone 15 Pro Max", value: "iPhone 15 Pro Max" },
+      ],
+    },
+
+    {
+      label: "Case Samsung",
+      items: [
+        { label: "Samsung Galaxy Note", value: "Samsung Galaxy Note" },
+        { label: "Samsung Galaxy S", value: "Samsung Galaxy S" },
+        { label: "Samsung Galaxy A", value: "Samsung Galaxy A" },
+        { label: "Samsung Galaxy J", value: "Samsung Galaxy J" },
+      ],
+    },
+
+    {
+      label: "Porte-clés",
+      items: [
+        { label: "Porte-clés rectangle", value: "Porte-clés rectangle" },
+        { label: "Porte-clés carré", value: "Porte-clés carré" },
+        { label: "Porte-clés rond", value: "Porte-clés rond" },
+        { label: "Porte-clés cœur", value: "Porte-clés cœur" },
+        { label: "Porte-clés ovale", value: "Porte-clés ovale" },
+        { label: "Porte-clés personnalisé", value: "Porte-clés personnalisé" },
+        { label: "Porte-clés en métal", value: "Porte-clés en métal" },
+        { label: "Porte-clés en plastique", value: "Porte-clés en plastique" },
+        { label: "Porte-clés en bois", value: "Porte-clés en bois" },
+        { label: "Porte-clés en acrylique", value: "Porte-clés en acrylique" },
+        { label: "Porte-clés décapsuleurs ", value: "Porte-clés en acrylique" },
+      ],
+    },
+  ];
+
+  const groupedItemTemplate = (option: GroupType) => {
+    return (
+      <div className="flex align-items-center">
+        <div>{option.label}</div>
+      </div>
+    );
+  };
 
   const onInputChange = (e: any, name: any) => {
     const val = (e.target && e.target.value) || "";
@@ -113,9 +240,9 @@ export default function Profile() {
   };
 
   const [selectedCategory, setselectedCategory] = useState<Demo.Category>();
-  const [selectedSize, setSelectedSize] = useState();
+  const [selectedSize, setSelectedSize] = useState<GroupItem | null>(null);
   const [selectedColor, setSelectedColor] = useState();
-  const [selectedType, setSelectedType] = useState();
+  const [selectedType, setSelectedType] = useState<GroupItem | null>(null);
 
   const [categories, setCategories] = useState([]);
 
@@ -156,19 +283,18 @@ export default function Profile() {
         token: token,
         sub_category: subCategory,
       };
-      console.log(dataToapi);
 
       try {
         await axios.post("/api/sub_category/add", dataToapi).then((res) => {
           const result = res.data;
           if (result.status === "success") {
             // redirect to subCategory overview
-            toastMessage("success", "Sous-catégorie enregistré avec succès.");
+            toastMessage("success", "Sous-catégorie enregistrée avec succès.");
             setSubCategory(emptySubCategory);
             setSubmitted(false);
             setSelectedColor(undefined);
-            setSelectedSize(undefined);
-            setSelectedType(undefined);
+            setSelectedSize(null);
+            setSelectedType(null);
             setselectedCategory(undefined);
           } else {
             toastMessage("error", result.data);
@@ -189,26 +315,7 @@ export default function Profile() {
 
   // Options en fonction de la catégorie sélectionnée
   let typeOptions: string[] = [];
-  if (selectedCategory?.category_name === "Tasse") {
-    typeOptions = typeCup;
-  } else {
-    typeOptions = ["Non définie"];
-  }
-
-  let sizeOptions: string[] = [];
-  if (
-    selectedCategory?.category_name === "Maillot à col" ||
-    selectedCategory?.category_name === "T-Shirt" ||
-    selectedCategory?.category_name === "Maillot"
-  ) {
-    sizeOptions = sizeShirt;
-  } else if (selectedCategory?.category_name === "Tasse") {
-    sizeOptions = sizeCup;
-  } else if (selectedCategory?.category_name === "Tumbler") {
-    sizeOptions = sizeTumbler;
-  } else {
-    sizeOptions = ["Non définie"];
-  }
+  typeOptions = typeCup;
 
   useEffect(() => {
     if (userInfo) {
@@ -271,12 +378,16 @@ export default function Profile() {
 
               <Dropdown
                 value={selectedSize}
-                onChange={(e) => {
+                onChange={(e: DropdownChangeEvent) => {
                   setSelectedSize(e.value);
                   onOtherInputChange(e.value, "size");
                 }}
-                options={sizeOptions}
+                optionLabel="label"
+                options={sizeAll}
                 placeholder="Choisir la Taille"
+                optionGroupLabel="label"
+                optionGroupChildren="items"
+                optionGroupTemplate={groupedItemTemplate}
                 filter
                 className={classNames({
                   "p-invalid": submitted && !subCategory.size,
@@ -412,13 +523,16 @@ export default function Profile() {
               <Dropdown
                 id="type"
                 value={selectedType}
-                onChange={(e) => {
+                onChange={(e: DropdownChangeEvent) => {
                   setSelectedType(e.value);
                   onOtherInputChange(e.value, "type");
                 }}
-                options={typeOptions}
-                placeholder="Choisir Type"
-                disabled={loadingCategories}
+                optionLabel="label"
+                options={typeAll}
+                placeholder="Choisir le type"
+                optionGroupLabel="label"
+                optionGroupChildren="items"
+                optionGroupTemplate={groupedItemTemplate}
                 filter
                 className={classNames({
                   "p-invalid": submitted && !subCategory.type,
