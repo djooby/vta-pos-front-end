@@ -147,6 +147,7 @@ const SubCategoryList: React.FC<SubCategoryListProps> = ({ id_category }) => {
         { label: "Avec tête", value: "Avec tête" },
         { label: "Gluter", value: "Gluter" },
         { label: "Gris", value: "Gris" },
+        { label: "Isothermique", value: "Isothermique" },
         { label: "Magique", value: "Magique" },
         { label: "Manche en argent", value: "Manche en argent" },
         { label: "Manche en or", value: "Manche en or" },
@@ -154,6 +155,7 @@ const SubCategoryList: React.FC<SubCategoryListProps> = ({ id_category }) => {
         { label: "Personnalisé", value: "Personnalisé" },
         { label: "Sans manche", value: "Sans manche" },
         { label: "Simple", value: "Simple" },
+        { label: "Thermos enfant", value: "Thermos enfant" },
       ],
     },
 
