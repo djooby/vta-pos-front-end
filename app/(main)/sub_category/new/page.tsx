@@ -166,6 +166,10 @@ export default function Profile() {
             toastMessage("success", "Sous-catégorie enregistré avec succès.");
             setSubCategory(emptySubCategory);
             setSubmitted(false);
+            setSelectedColor(undefined);
+            setSelectedSize(undefined);
+            setSelectedType(undefined);
+            setselectedCategory(undefined);
           } else {
             toastMessage("error", result.data);
           }
@@ -324,6 +328,7 @@ export default function Profile() {
                 className={classNames({
                   "p-invalid": submitted && !subCategory.cost,
                 })}
+                value={subCategory.cost}
                 onChange={(e) => onOtherInputChange(e.value, "cost")}
                 max={150000}
               />
@@ -342,6 +347,7 @@ export default function Profile() {
                 placeholder="Prix de vente"
                 id="sale_price"
                 type="text"
+                value={subCategory.sale_price}
                 className={classNames({
                   "p-invalid": submitted && !subCategory.sale_price,
                 })}
@@ -363,6 +369,7 @@ export default function Profile() {
                 placeholder="Le nombre d'unités"
                 id="quantity"
                 type="text"
+                value={subCategory.quantity}
                 className={classNames({
                   "p-invalid": submitted && !subCategory.quantity,
                 })}
@@ -384,6 +391,7 @@ export default function Profile() {
                 placeholder="Quantité minimale"
                 id="quantity"
                 type="text"
+                value={subCategory.alert_quantity}
                 className={classNames({
                   "p-invalid": submitted && !subCategory.alert_quantity,
                 })}

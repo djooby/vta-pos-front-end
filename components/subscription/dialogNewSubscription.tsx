@@ -59,7 +59,6 @@ const DialogNewSubscription: React.FC<NewSubscriptionProps> = (props) => {
       setLoading(true);
 
       // save via API
-
       const start_date = fonctions.convertDateToDMY(date as Date);
       const end_date = fonctions.add30Days(start_date);
       newSubs.start_date = start_date;

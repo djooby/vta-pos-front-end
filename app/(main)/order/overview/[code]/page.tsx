@@ -6,6 +6,7 @@ import { Demo } from "@/types";
 import fonctions from "@/utils/fonctions";
 import axios from "axios";
 import { Button } from "primereact/button";
+import { Calendar } from "primereact/calendar";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Dialog } from "primereact/dialog";
@@ -15,6 +16,8 @@ import { Toast } from "primereact/toast";
 import { classNames } from "primereact/utils";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
 
+import { Nullable } from "primereact/ts-helpers";
+
 export default function OrderDetail({
   params,
 }: {
@@ -22,6 +25,58 @@ export default function OrderDetail({
     code: string;
   };
 }) {
+  let today = new Date();
+  let day = today.getDay();
+  let month = today.getMonth();
+  let year = today.getFullYear();
+  let prevMonth = month === 0 ? 11 : month - 1;
+
+  let prevYear = prevMonth === 11 ? year - 1 : year;
+  let nextMonth = month === 11 ? 0 : month + 2;
+  let nextYear = nextMonth === 0 ? year + 1 : year;
+
+  let minDate = new Date();
+
+  minDate.setMonth(prevMonth);
+
+  let maxDate = new Date();
+
+  maxDate.setMonth(nextMonth);
+  maxDate.setFullYear(nextYear);
+
+  const [date, setDate] = useState<Nullable<Date>>(null);
+
+  const onChangeDate = async () => {
+    if (date !== null || today === date) {
+      const rendez_vous = fonctions.convertDateToDMY(date as Date);
+
+      const data = {
+        id_order: order.id_order,
+        data: {
+          rendez_vous: rendez_vous,
+        },
+      };
+
+      try {
+        await axios.post("/api/order/update", data).then((res) => {
+          const result = res.data;
+          if (result.status === "success") {
+            toastMessage("success", result.data);
+            getOrder();
+          } else {
+            toastMessage("error", result.data);
+          }
+        });
+      } catch (e) {
+        console.log(e);
+        toastMessage(
+          "error",
+          "Erreur lors de la mise à jour de la date de rendez-vous."
+        );
+      }
+    }
+  };
+
   const { userInfo } = useContext(UserContext);
   const toast = useRef<Toast | null>(null);
 
@@ -268,12 +323,32 @@ export default function OrderDetail({
 
           <div className="col-12 md:col-4">
             {(balance !== 0 || order.status !== "Livré") && (
-              <div className="card flex justify-content-between mb-5">
+              <div className="card flex justify-content-between gap-2 mb-5">
                 {balance > 0 && (
                   <Button
-                    label="Ajouter Paiement"
+                    icon="pi pi-plus"
+                    label="Paiement"
                     outlined
                     onClick={() => setIsPaymentVisible(true)}
+                    placeholder="Rendez-vous"
+                    aria-label="Date rendez-vous"
+                  />
+                )}
+
+                {!order?.rendez_vous && order.status !== "Livré" && (
+                  <Calendar
+                    id="rendez_vous"
+                    dateFormat="yy-mm-dd"
+                    showIcon
+                    showButtonBar
+                    readOnlyInput
+                    value={date}
+                    onChange={(e) => {
+                      setDate(e.value);
+                      onChangeDate();
+                    }}
+                    minDate={minDate}
+                    maxDate={maxDate}
                   />
                 )}
 

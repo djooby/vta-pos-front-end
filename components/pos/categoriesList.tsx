@@ -63,8 +63,8 @@ const CategoryList: React.FC<CategoryListProps> = ({ onCategorySelect }) => {
   );
 
   const sortOptions = [
-    { label: "Ordre décroissant", value: "!product_quantity" },
-    { label: "Ordre  croissant", value: "product_quantity" },
+    { label: "Ordre décroissant", value: "!quantity" },
+    { label: "Ordre  croissant", value: "quantity" },
   ];
 
   const onFilter = (e: React.ChangeEvent<HTMLInputElement>) => {

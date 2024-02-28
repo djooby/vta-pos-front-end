@@ -221,6 +221,7 @@ declare namespace Demo {
     orderProducts?: OrderProduct[];
     date: string;
     code: string;
+    rendez_vous?: string;
   };
 
   type Payment = {

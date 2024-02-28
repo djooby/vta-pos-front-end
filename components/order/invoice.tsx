@@ -29,7 +29,7 @@ const Invoice = ({
               VTA ENTERPRISE
             </div>
             <span>En face l&apos;ecole des soeurs EIC,</span>
-            <span>Rte nationale #6, Nord&apos;ESt,Haiti</span>
+            <span>Rte nationale #6, Nord&apos;Est,Haiti</span>
             <span className="mb-2">(+509) 4279-8776 / (+509) 4626-0757</span>
           </div>
           <div className="flex flex-column mt-5 md:mt-0">
