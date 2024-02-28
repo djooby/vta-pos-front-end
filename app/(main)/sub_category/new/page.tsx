@@ -110,6 +110,15 @@ export default function Profile() {
 
   const sizeAll: GroupType[] = [
     {
+      label: "Aucun",
+      items: [
+        {
+          label: "Non définie",
+          value: "Non définie",
+        },
+      ],
+    },
+    {
       label: "Maillot",
       items: [
         { label: "Youth", value: "Youth" },
@@ -140,6 +149,15 @@ export default function Profile() {
   ];
 
   const typeAll: GroupType[] = [
+    {
+      label: "Aucun",
+      items: [
+        {
+          label: "Non définie",
+          value: "Non définie",
+        },
+      ],
+    },
     {
       label: "Thermos",
       items: [
