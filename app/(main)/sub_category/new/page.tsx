@@ -4,7 +4,6 @@ import { UserContext } from "@/layout/context/usercontext";
 import { Demo } from "@/types";
 import fonctions from "@/utils/fonctions";
 import axios from "axios";
-import { useRouter } from "next/navigation";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
 import { Dropdown, DropdownChangeEvent } from "primereact/dropdown";
@@ -39,7 +38,6 @@ export default function Profile() {
       life: 3000,
     });
   };
-
 
   let emptySubCategory: Demo.SubCategory = {
     code: fonctions.generateRandomString(10),
@@ -119,14 +117,14 @@ export default function Profile() {
       label: "Once",
       items: [
         { label: "11 oz", value: "11 oz" },
-        { label: "12 oz", value: "11 oz" },
-        { label: "13 oz", value: "11 oz" },
-        { label: "14 oz", value: "11 oz" },
-        { label: "15 oz", value: "11 oz" },
-        { label: "16 oz", value: "11 oz" },
-        { label: "18 oz", value: "11 oz" },
-        { label: "20 oz", value: "11 oz" },
-        { label: "30 oz", value: "11 oz" },
+        { label: "12 oz", value: "12 oz" },
+        { label: "13 oz", value: "13 oz" },
+        { label: "14 oz", value: "14 oz" },
+        { label: "15 oz", value: "15 oz" },
+        { label: "16 oz", value: "16 oz" },
+        { label: "18 oz", value: "18 oz" },
+        { label: "20 oz", value: "20 oz" },
+        { label: "30 oz", value: "30 oz" },
       ],
     },
   ];
