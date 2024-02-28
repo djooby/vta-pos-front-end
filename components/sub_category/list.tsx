@@ -213,7 +213,7 @@ const SubCategoryList: React.FC<SubCategoryListProps> = ({ id_category }) => {
         { label: "Porte-clés en plastique", value: "Porte-clés en plastique" },
         { label: "Porte-clés en bois", value: "Porte-clés en bois" },
         { label: "Porte-clés en acrylique", value: "Porte-clés en acrylique" },
-        { label: "Porte-clés décapsuleurs ", value: "Porte-clés en acrylique" },
+        { label: "Porte-clés décapsuleurs ", value: "Porte-clés décapsuleurs" },
       ],
     },
   ];

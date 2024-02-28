@@ -10,6 +10,7 @@ import { FilterMatchMode } from "primereact/api";
 import { Button } from "primereact/button";
 import { Column } from "primereact/column";
 import { DataTable, DataTableFilterMeta } from "primereact/datatable";
+import { Dialog } from "primereact/dialog";
 import { InputText } from "primereact/inputtext";
 import { Toast } from "primereact/toast";
 import { useCallback, useContext, useEffect, useRef, useState } from "react";
@@ -29,8 +30,17 @@ export default function Order() {
     });
   };
 
+  const emptyOrder: Demo.Order = {
+    subTotal: 0,
+    discount: 0,
+    total: 0,
+    date: "",
+    code: "",
+  };
+
   const [loading, setLoading] = useState(false);
   const [orders, setOrders] = useState<Demo.Order[]>([]);
+  const [order, setOrder] = useState<Demo.Order>(emptyOrder);
 
   const getOrders = useCallback(async () => {
     setLoading(true);
@@ -105,7 +115,7 @@ export default function Order() {
             type="button"
             tooltip="Supprimer"
             tooltipOptions={{ position: "top" }}
-            // onClick={() => confirmDeleteCategory(rowData)}
+            onClick={() => confirmDeleteOrder(rowData)}
           />
         )}
       </>
@@ -129,6 +139,65 @@ export default function Order() {
     );
   };
 
+  const [isDeleteDialog, setIsDeleteDialog] = useState(false);
+
+  const [loadingDelete, setLoadingDelete] = useState(false);
+
+  const confirmDeleteOrder = (rowData: Demo.Order) => {
+    setOrder(rowData);
+    setIsDeleteDialog(true);
+  };
+
+  const hideDeleteOrderDialog = () => {
+    setIsDeleteDialog(false);
+  };
+
+  const deleteOrder = async () => {
+    setLoadingDelete(true);
+    try {
+      await axios
+        .post("/api/order/delete", {
+          token: userInfo.token,
+          id_order: order.id_order,
+        })
+        .then((res) => {
+          const result = res.data;
+          if (result.status === "success") {
+            toastMessage("success", "Commande supprimée avec succès");
+            getOrders();
+            hideDeleteOrderDialog();
+          } else {
+            toastMessage("error", result.data);
+          }
+          setLoadingDelete(false);
+        });
+    } catch (e) {
+      setLoadingDelete(false);
+      console.log(e);
+      toastMessage("error", "Erreur lors de la suppréssion des commandes.");
+    }
+  };
+
+  const deleteDialogFooter = (
+    <>
+      <Button
+        loading={loadingDelete}
+        label="Non"
+        icon="pi pi-times"
+        severity="secondary"
+        className="p-button-text"
+        text
+        onClick={hideDeleteOrderDialog}
+      />
+      <Button
+        label="Oui"
+        icon="pi pi-check"
+        text
+        loading={loadingDelete}
+        onClick={() => deleteOrder()}
+      />
+    </>
+  );
   return (
     <>
       <div className="col-12">
@@ -199,6 +268,27 @@ export default function Order() {
               body={actionBodyTemplate}
             />
           </DataTable>
+          <Dialog
+            visible={isDeleteDialog}
+            header="Confirmation"
+            modal
+            style={{ width: "450px" }}
+            onHide={hideDeleteOrderDialog}
+            footer={deleteDialogFooter}
+          >
+            <div className="flex align-items-center justify-content-center">
+              <i
+                className="pi pi-exclamation-triangle mr-3"
+                style={{ fontSize: "2rem" }}
+              />
+              {order && (
+                <span>
+                  Êtes-vous sûr(e) de vouloir supprimer cette commande:
+                  <b>{" " + order.code + " "}</b>
+                </span>
+              )}
+            </div>
+          </Dialog>
         </div>
       </div>
     </>
