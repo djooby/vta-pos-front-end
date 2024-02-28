@@ -29,7 +29,10 @@ const AppMenu = () => {
     },
 
     {
-      visible: role === "Super Admin" || role === "Admin" ? true : false,
+      visible:
+        role === "Super Admin" || role === "Admin" || role === "Secretary"
+          ? true
+          : false,
 
       label: "Internet",
       icon: "pi pi-th-large",
@@ -44,7 +47,10 @@ const AppMenu = () => {
     },
 
     {
-      visible: role === "Super Admin" || role === "Admin" ? true : false,
+      visible:
+        role === "Super Admin" || role === "Admin" || role === "Secretary"
+          ? true
+          : false,
 
       label: "Catégorie",
       icon: "pi pi-th-large",

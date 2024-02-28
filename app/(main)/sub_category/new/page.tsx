@@ -40,7 +40,6 @@ export default function Profile() {
     });
   };
 
-  const router = useRouter();
 
   let emptySubCategory: Demo.SubCategory = {
     code: fonctions.generateRandomString(10),
@@ -90,22 +89,6 @@ export default function Profile() {
     "Turquoise",
     "Vert",
     "Violet",
-  ];
-
-  const typeCup = [
-    "Argent",
-    "Avec cuillère",
-    "Avec manche",
-    "Avec tête",
-    "Gluter",
-    "Gris",
-    "Magique",
-    "Manche en argent",
-    "Manche en or",
-    "Or",
-    "Personnalisé",
-    "Sans manche",
-    "Simple",
   ];
 
   const sizeAll: GroupType[] = [
@@ -244,13 +227,6 @@ export default function Profile() {
     );
   };
 
-  const onInputChange = (e: any, name: any) => {
-    const val = (e.target && e.target.value) || "";
-    let _subCategory: any = { ...subCategory };
-    _subCategory[`${name}`] = val;
-    setSubCategory(_subCategory);
-  };
-
   const onOtherInputChange = (val: any, name: any) => {
     let _subCategory: any = { ...subCategory };
     _subCategory[`${name}`] = val;
@@ -330,10 +306,6 @@ export default function Profile() {
       }
     }
   };
-
-  // Options en fonction de la catégorie sélectionnée
-  let typeOptions: string[] = [];
-  typeOptions = typeCup;
 
   useEffect(() => {
     if (userInfo) {

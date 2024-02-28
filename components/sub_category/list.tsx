@@ -29,6 +29,16 @@ interface SubCategoryListProps {
   id_category?: number;
 }
 
+interface GroupItem {
+  label: string;
+  value: string;
+}
+
+interface GroupType {
+  label: string;
+  items: GroupItem[];
+}
+
 const SubCategoryList: React.FC<SubCategoryListProps> = ({ id_category }) => {
   let emptyCategory: Demo.Category = {
     id_category: "0",
@@ -78,23 +88,141 @@ const SubCategoryList: React.FC<SubCategoryListProps> = ({ id_category }) => {
     "Violet",
   ];
 
-  const sizeShirt = ["Youth", "XS", "S", "M", "L", "XL", "XXL", "XXXL"];
-  const sizeCup = ["11 oz", "13 oz", "15 oz"];
-  const sizeTumbler = ["18 oz", "20 oz", "30 oz", "15 oz"];
-  const typeCup = [
-    "Argent",
-    "Avec cuillère",
-    "Avec tête",
-    "Gluten",
-    "Gris",
-    "Magique",
-    "Manche en argent",
-    "Manche en or",
-    "Or",
-    "Personnalisé",
-    "Simple",
-    "Tasse Magique",
+  const sizeAll: GroupType[] = [
+    {
+      label: "Aucun",
+      items: [
+        {
+          label: "Non définie",
+          value: "Non définie",
+        },
+      ],
+    },
+    {
+      label: "Maillot",
+      items: [
+        { label: "Youth", value: "Youth" },
+        { label: "XS", value: "XS" },
+        { label: "S", value: "S" },
+        { label: "M", value: "M" },
+        { label: "L", value: "L" },
+        { label: "XL", value: "XL" },
+        { label: "XXL", value: "XXL" },
+        { label: "XXXL", value: "XXXL" },
+      ],
+    },
+
+    {
+      label: "Once",
+      items: [
+        { label: "11 oz", value: "11 oz" },
+        { label: "12 oz", value: "12 oz" },
+        { label: "13 oz", value: "13 oz" },
+        { label: "14 oz", value: "14 oz" },
+        { label: "15 oz", value: "15 oz" },
+        { label: "16 oz", value: "16 oz" },
+        { label: "18 oz", value: "18 oz" },
+        { label: "20 oz", value: "20 oz" },
+        { label: "30 oz", value: "30 oz" },
+      ],
+    },
   ];
+
+  const typeAll: GroupType[] = [
+    {
+      label: "Aucun",
+      items: [
+        {
+          label: "Non définie",
+          value: "Non définie",
+        },
+      ],
+    },
+    {
+      label: "Thermos",
+      items: [
+        { label: "Argent", value: "Argent" },
+        { label: "Avec cuillère", value: "Avec cuillère" },
+        { label: "Avec manche", value: "Avec manche" },
+        { label: "Avec tête", value: "Avec tête" },
+        { label: "Gluter", value: "Gluter" },
+        { label: "Gris", value: "Gris" },
+        { label: "Magique", value: "Magique" },
+        { label: "Manche en argent", value: "Manche en argent" },
+        { label: "Manche en or", value: "Manche en or" },
+        { label: "Or", value: "Or" },
+        { label: "Personnalisé", value: "Personnalisé" },
+        { label: "Sans manche", value: "Sans manche" },
+        { label: "Simple", value: "Simple" },
+      ],
+    },
+
+    {
+      label: "Case iPhone",
+      items: [
+        { label: "iPhone 6", value: "iPhone 6" },
+        { label: "iPhone 7-8", value: "iPhone 7-8" },
+        { label: "iPhone 7-8 plus", value: "iPhone 7-8 plus" },
+        { label: "iPhone XS", value: "iPhone XS" },
+        { label: "iPhone XR", value: "iPhone XR" },
+        { label: "iPhone XM", value: "iPhone XM" },
+        { label: "iPhone 11", value: "iPhone 11" },
+        { label: "iPhone 11 Pro", value: "iPhone 11 Pro" },
+        { label: "iPhone 11 Pro Max", value: "iPhone 11 Pro Max" },
+        { label: "iPhone 12", value: "iPhone 12" },
+        { label: "iPhone 12 Mini", value: "iPhone 12 Mini" },
+        { label: "iPhone 12 Pro", value: "iPhone 12 Pro" },
+        { label: "iPhone 12 Pro Max", value: "iPhone 12 Pro Max" },
+        { label: "iPhone 13", value: "iPhone 13" },
+        { label: "iPhone 13 Mini", value: "iPhone 13 Mini" },
+        { label: "iPhone 13 Pro", value: "iPhone 13 Pro" },
+        { label: "iPhone 13 Pro Max ", value: "iPhone 13 Pro Max" },
+        { label: "iPhone 14", value: "iPhone 14" },
+        { label: "iPhone 14 Mini", value: "iPhone 14 Mini" },
+        { label: "iPhone 14 Pro", value: "iPhone 14 Pro" },
+        { label: "iPhone 14 Pro Max", value: "iPhone 14 Pro Max" },
+        { label: "iPhone 15", value: "iPhone 15" },
+        { label: "iPhone 15 Mini", value: "iPhone 15 Mini" },
+        { label: "iPhone 15 Pro", value: "iPhone 15 Pro" },
+        { label: "iPhone 15 Pro Max", value: "iPhone 15 Pro Max" },
+      ],
+    },
+
+    {
+      label: "Case Samsung",
+      items: [
+        { label: "Samsung Galaxy Note", value: "Samsung Galaxy Note" },
+        { label: "Samsung Galaxy S", value: "Samsung Galaxy S" },
+        { label: "Samsung Galaxy A", value: "Samsung Galaxy A" },
+        { label: "Samsung Galaxy J", value: "Samsung Galaxy J" },
+      ],
+    },
+
+    {
+      label: "Porte-clés",
+      items: [
+        { label: "Porte-clés rectangle", value: "Porte-clés rectangle" },
+        { label: "Porte-clés carré", value: "Porte-clés carré" },
+        { label: "Porte-clés rond", value: "Porte-clés rond" },
+        { label: "Porte-clés cœur", value: "Porte-clés cœur" },
+        { label: "Porte-clés ovale", value: "Porte-clés ovale" },
+        { label: "Porte-clés personnalisé", value: "Porte-clés personnalisé" },
+        { label: "Porte-clés en métal", value: "Porte-clés en métal" },
+        { label: "Porte-clés en plastique", value: "Porte-clés en plastique" },
+        { label: "Porte-clés en bois", value: "Porte-clés en bois" },
+        { label: "Porte-clés en acrylique", value: "Porte-clés en acrylique" },
+        { label: "Porte-clés décapsuleurs ", value: "Porte-clés en acrylique" },
+      ],
+    },
+  ];
+
+  const groupedItemTemplate = (option: GroupType) => {
+    return (
+      <div className="flex align-items-center">
+        <div>{option.label}</div>
+      </div>
+    );
+  };
 
   const [selectedCategory, setSelectedCategory] = useState(null);
   const [selectedType, setSelectedType] = useState(null);
@@ -452,7 +580,11 @@ const SubCategoryList: React.FC<SubCategoryListProps> = ({ id_category }) => {
           options.editorCallback(e.value);
           setSelectedType(e.value);
         }}
-        options={typeOptions}
+        options={typeAll}
+        optionLabel="label"
+        optionGroupLabel="label"
+        optionGroupChildren="items"
+        optionGroupTemplate={groupedItemTemplate}
         placeholder="Choisir le type"
         disabled={loadingCategories}
         filter
@@ -467,7 +599,11 @@ const SubCategoryList: React.FC<SubCategoryListProps> = ({ id_category }) => {
         onChange={(e) => {
           options.editorCallback(e.value);
         }}
-        options={sizeOptions}
+        options={sizeAll}
+        optionLabel="label"
+        optionGroupLabel="label"
+        optionGroupChildren="items"
+        optionGroupTemplate={groupedItemTemplate}
         placeholder="Choisir la taille"
         disabled={loadingCategories}
         filter
@@ -496,30 +632,10 @@ const SubCategoryList: React.FC<SubCategoryListProps> = ({ id_category }) => {
     setSubCategory(e.data);
   };
 
-  const footer = subCategories && subCategories.length > 1 && "sous-catégories";
-
-  let typeOptions: string[] = [];
-  if (selectedCategory === "Tasse") {
-    typeOptions = typeCup;
-  } else {
-    typeOptions = ["Non définie"];
-  }
-
-  // Options en fonction de la catégorie sélectionnée
-  let sizeOptions: string[] = [];
-  if (
-    selectedCategory === "Maillot à col" ||
-    selectedCategory === "T-Shirt" ||
-    selectedCategory === "Maillot"
-  ) {
-    sizeOptions = sizeShirt;
-  } else if (selectedCategory === "Tasse") {
-    sizeOptions = sizeCup;
-  } else if (selectedCategory === "Tumbler") {
-    sizeOptions = sizeTumbler;
-  } else {
-    sizeOptions = ["Non définie"];
-  }
+  const footer =
+    subCategories &&
+    subCategories.length > 1 &&
+    subCategories.length + " sous-catégories";
 
   return (
     <div className="col-12">
@@ -611,13 +727,7 @@ const SubCategoryList: React.FC<SubCategoryListProps> = ({ id_category }) => {
             editor={(options: any) => numberEditor(options)}
             sortable
           />
-          {/* <Column
-          field="cost"
-          header="Prix d'achat"
-          editor={(options: any) => numberEditor(options)}
-          body={(rowData) => priceBodyTemplate(rowData.cost)}
-          sortable
-        /> */}
+
           <Column
             field="sale_price"
             header="Prix"
@@ -642,15 +752,18 @@ const SubCategoryList: React.FC<SubCategoryListProps> = ({ id_category }) => {
           />
           <Column field="created_by" header="Créé par" sortable />
           <Column field="date" header="Date" sortable />
-          <Column
-            header="Action"
-            headerStyle={{
-              minWidth: "10rem",
-              maxWidth: "16rem",
-              width: "10rem",
-            }}
-            body={actionBodyTemplate}
-          />
+
+          {userInfo.role === "Super Admin" && (
+            <Column
+              header="Action"
+              headerStyle={{
+                minWidth: "10rem",
+                maxWidth: "16rem",
+                width: "10rem",
+              }}
+              body={actionBodyTemplate}
+            />
+          )}
         </DataTable>
       </div>
 
