@@ -140,6 +140,20 @@ export default function Profile() {
       ],
     },
     {
+      label: "Maillot",
+      items: [
+        {
+          label: "Haiti",
+          value: "Haiti",
+        },
+
+        {
+          label: "R.D",
+          value: "R.D",
+        },
+      ],
+    },
+    {
       label: "Thermos",
       items: [
         { label: "Argent", value: "Argent" },

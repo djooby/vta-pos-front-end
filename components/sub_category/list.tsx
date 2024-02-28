@@ -138,6 +138,21 @@ const SubCategoryList: React.FC<SubCategoryListProps> = ({ id_category }) => {
         },
       ],
     },
+
+    {
+      label: "Maillot",
+      items: [
+        {
+          label: "Haiti",
+          value: "Haiti",
+        },
+
+        {
+          label: "R.D",
+          value: "R.D",
+        },
+      ],
+    },
     {
       label: "Thermos",
       items: [
@@ -268,6 +283,7 @@ const SubCategoryList: React.FC<SubCategoryListProps> = ({ id_category }) => {
   const initFilters = () => {
     setFilters({
       global: { value: null, matchMode: FilterMatchMode.CONTAINS },
+      status: { value: null, matchMode: FilterMatchMode.EQUALS },
     });
     setGlobalFilterValue("");
   };
