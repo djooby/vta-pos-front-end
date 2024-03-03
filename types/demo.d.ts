@@ -98,16 +98,15 @@ declare namespace Demo {
     size: string;
   }
   interface Task {
-    id?: number;
-    name?: string;
-    description?: string;
+    id_task?: number;
+    id_order?: string;
+    id_order_item?: number;
     completed?: boolean;
+    description?: string;
     status?: string;
-    comments?: string;
-    attachments?: string;
-    members?: Member[];
-    startDate?: string;
-    endDate?: string;
+    date?: string;
+    created_by?: string;
+    quantity?: string;
   }
 
   interface DialogConfig {
@@ -152,12 +151,12 @@ declare namespace Demo {
 
   //ProductService
   type SubCategory = {
-    id_sub_product?: string;
+    id_sub_category?: string;
     code: string;
     category: string;
     color: string;
     size: string;
-    type?: string;
+    type: string;
     cost: number;
     sale_price: number;
     quantity: number;
@@ -165,7 +164,6 @@ declare namespace Demo {
     created_by?: string;
     image?: string;
     status?: InventoryStatus;
-    attribute?: Attribute[];
     orders?: ProductOrder[];
     [key: string]:
       | string
@@ -179,13 +177,6 @@ declare namespace Demo {
       | File[];
   };
 
-  type Attribute = {
-    id_product_attribute?: string;
-    id_product?: string;
-    attribute_name?: string;
-    attribute_value?: string;
-  };
-
   type Client = {
     id_client: number;
     name: string;
@@ -194,34 +185,37 @@ declare namespace Demo {
     date: string;
   };
 
-  type OrderProduct = {
-    id_order_product?: number;
-    id_product: string;
+  type OrderItem = {
+    id_order_item?: number;
     id_order?: string;
+    id_sub_category: string;
     category: string;
     image?: string;
     size: string;
     color: string;
-    type?: string;
+    type: string;
     code?: string;
     service: string;
     quantity: number;
     price: number;
     total: number;
+    status?: string;
+    created_by?: string;
   };
 
   type Order = {
     id_order?: string;
     client?: Client;
-    subTotal: number;
+    sub_total: number;
     discount: number;
     total: number;
     status?: string;
-    deliveryDate?: string;
-    orderProducts?: OrderProduct[];
+    delivery_date?: string;
+    orderItems?: OrderItem[];
     date: string;
     code: string;
     rendez_vous?: string;
+    origin: string;
   };
 
   type Payment = {

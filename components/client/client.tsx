@@ -35,6 +35,8 @@ const ClientPos: React.FC<ClientProps> = ({ client }) => {
         )}
       </div>
     </div>
+
+    
   );
 };
 

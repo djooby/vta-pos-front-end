@@ -163,6 +163,7 @@ const DialogCategoryProducts: React.FC<DialogCategoryProductsProps> = (
         <Column field="size" header="Taille" sortable />
         <Column field="color" header="Couleur" sortable />
         <Column field="type" header="Type" sortable />
+        <Column field="quantity" header="Qté" sortable />
         <Column
           field="status"
           header="Statut"

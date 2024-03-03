@@ -6,7 +6,6 @@ import { Demo } from "@/types";
 import fonctions from "@/utils/fonctions";
 import axios from "axios";
 import { Button } from "primereact/button";
-import { Calendar } from "primereact/calendar";
 import { Column } from "primereact/column";
 import { DataTable } from "primereact/datatable";
 import { Dialog } from "primereact/dialog";
@@ -92,11 +91,12 @@ export default function OrderDetail({
   };
 
   let emptyOrder: Demo.Order = {
-    subTotal: 0,
+    sub_total: 0,
     discount: 0,
     total: 0,
     date: "",
     code: "",
+    origin: "",
   };
 
   const [loading, setLoading] = useState(false);
@@ -260,7 +260,7 @@ export default function OrderDetail({
     if (action === "Traitement en cours") {
       data = {
         id_order: order.id_order,
-        products: order.orderProducts,
+        products: order.orderItems,
         data: {
           status: action,
         },
@@ -332,23 +332,6 @@ export default function OrderDetail({
                     onClick={() => setIsPaymentVisible(true)}
                     placeholder="Rendez-vous"
                     aria-label="Date rendez-vous"
-                  />
-                )}
-
-                {!order?.rendez_vous && order.status !== "Livré" && (
-                  <Calendar
-                    id="rendez_vous"
-                    dateFormat="yy-mm-dd"
-                    showIcon
-                    showButtonBar
-                    readOnlyInput
-                    value={date}
-                    onChange={(e) => {
-                      setDate(e.value);
-                      onChangeDate();
-                    }}
-                    minDate={minDate}
-                    maxDate={maxDate}
                   />
                 )}
 

@@ -15,17 +15,19 @@ import DialogDiscount from "../pos/dialogDiscount";
 import DialogInvoice from "../pos/dialogProforma";
 
 interface OrderProps {
-  orderProducts: Demo.OrderProduct[];
+  orderItems: Demo.OrderItem[];
   order: Demo.Order | null;
   client: Demo.Client;
-  remove: (orderProduct: Demo.OrderProduct) => void;
+  rendezVous: string;
+  remove: (orderProduct: Demo.OrderItem) => void;
   onDiscount: (discount: number) => void;
 }
 
 const Order: React.FC<OrderProps> = ({
-  orderProducts,
+  orderItems,
   order,
   client,
+  rendezVous,
   remove,
   onDiscount,
 }) => {
@@ -69,9 +71,9 @@ const Order: React.FC<OrderProps> = ({
       <div className={className}>
         <ul className="list-none py-0 pr-0 pl-0 md:pl-5 mt-6 mx-0 mb-0 flex-auto">
           <li className="flex justify-content-between mb-4">
-            <span className="text-xl text-900 font-semibold">Subtotal</span>
+            <span className="text-xl text-900 font-semibold">Sous-total</span>
             <span className="text-xl text-900">
-              {fonctions.formatCurrency(order?.subTotal)}
+              {fonctions.formatCurrency(order?.sub_total)}
             </span>
           </li>
           <li className="flex justify-content-between mb-4">
@@ -93,10 +95,13 @@ const Order: React.FC<OrderProps> = ({
               label="Proforma"
               icon="pi pi-file-pdf"
               outlined
-              disabled={orderProducts.length === 0 || !client.id_client}
+              disabled={
+                orderItems.length === 0 ||
+                !client.id_client ||
+                rendezVous === ""
+              }
               onClick={() => {
                 handleInvoice("PROFORMA");
-                console.log(order);
               }}
             ></Button>
 
@@ -104,7 +109,11 @@ const Order: React.FC<OrderProps> = ({
               loading={loading}
               label="Enregistrer"
               icon="pi pi-save"
-              disabled={orderProducts.length === 0 || !client.id_client}
+              disabled={
+                orderItems.length === 0 ||
+                !client.id_client ||
+                rendezVous === ""
+              }
               onClick={() => saveOrder()}
             ></Button>
           </li>
@@ -146,7 +155,7 @@ const Order: React.FC<OrderProps> = ({
     );
   };
 
-  const actionOrderBodyTemplate = (rowData: Demo.OrderProduct) => {
+  const actionOrderBodyTemplate = (rowData: Demo.OrderItem) => {
     return (
       <>
         <Button
@@ -210,8 +219,9 @@ const Order: React.FC<OrderProps> = ({
       token: userInfo.token,
     };
 
-    console.log(dataApi);
+    console.log(order);
 
+    // save order
     try {
       await axios.post("/api/order/add", dataApi).then((res) => {
         const result = res.data;
@@ -241,20 +251,24 @@ const Order: React.FC<OrderProps> = ({
         toggleable
       >
         <DataTable
-          dataKey="id_order_product"
+          dataKey="id_order_item"
           rows={10}
           className="datatable-responsive"
-          value={orderProducts}
+          value={orderItems}
           emptyMessage="Aucun article."
           responsiveLayout="scroll"
         >
-          <Column field="cost" header="Image" body={imageBodyTemplate} />
-          <Column field="category" header="Category" sortable />
+          <Column field="iamge" header="Image" body={imageBodyTemplate} />
           <Column field="code" header="Code" sortable />
+          <Column field="category" header="Categorie" sortable />
+          <Column field="size" header="Taille" sortable />
+          <Column field="color" header="Couleur" sortable />
+          <Column field="type" header="Type" sortable />
           <Column field="quantity" header="Qte" sortable />
+          <Column field="service" header="Service" sortable />
           <Column
             field="price"
-            header="Prix Unitaire"
+            header="Prix"
             sortable
             body={(rowData) => priceBodyTemplate(rowData.price)}
           />
@@ -265,15 +279,7 @@ const Order: React.FC<OrderProps> = ({
             sortable
           />
 
-          <Column
-            header="Action"
-            headerStyle={{
-              minWidth: "7rem",
-              maxWidth: "12rem",
-              width: "10rem",
-            }}
-            body={actionOrderBodyTemplate}
-          />
+          <Column header="Action" body={actionOrderBodyTemplate} />
         </DataTable>
       </Panel>
 

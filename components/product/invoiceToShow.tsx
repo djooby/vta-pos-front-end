@@ -1,5 +1,5 @@
 import fonctions from "@/utils/fonctions";
-import React, { RefObject, useRef } from "react";
+import React from "react";
 
 interface MyComponentProps {
   transfertInfo: any;
@@ -45,7 +45,7 @@ const InvoiceToShow: React.FC<MyComponentProps> = ({
                 <span className="font-semibold mr-1">DATE:</span>
                 <span>
                   {transfertInfo.date &&
-                    fonctions.dateFormatDMY(transfertInfo.date)}
+                    fonctions.dateFormatYMDtoDMYFr(transfertInfo.date)}
                 </span>
               </div>
             </div>

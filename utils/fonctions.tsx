@@ -100,8 +100,18 @@ class Fonctions {
     });
   };
 
-  dateFormatDMY = (dateString: string) => {
+  dateFormatYMDtoDMYFr = (dateString: string) => {
     const dateObject = parse(dateString, "yyyy-MM-dd HH:mm:ss", new Date());
+    // Convertir la date en une chaîne avec le format "28 déc. 2023"
+    const formattedDateString = format(dateObject, "dd MMM yyyy", {
+      locale: fr,
+    });
+
+    return formattedDateString;
+  };
+
+  dateFormatDMYToDMYFr = (dateString: string) => {
+    const dateObject = parse(dateString, "yyyy-MM-dd", new Date());
     // Convertir la date en une chaîne avec le format "28 déc. 2023"
     const formattedDateString = format(dateObject, "dd MMM yyyy", {
       locale: fr,

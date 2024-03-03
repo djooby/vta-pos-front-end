@@ -28,9 +28,10 @@ const Invoice = ({
             <div className="my-3 text-4xl font-bold text-900">
               VTA ENTERPRISE
             </div>
-            <span>En face l&apos;ecole des soeurs EIC,</span>
+            <span>En face l&apos;école des soeurs EIC,</span>
             <span>Rte nationale #6, Nord&apos;Est,Haiti</span>
-            <span className="mb-2">(+509) 4279-8776 / (+509) 4626-0757</span>
+            <span className="mb-2">(+509) 4279-8776</span>
+            <span className="mb-2">(+509) 4626-0757</span>
           </div>
           <div className="flex flex-column mt-5 md:mt-0">
             <div className="text-2xl font-semibold text-left md:text-right mb-3">
@@ -39,7 +40,12 @@ const Invoice = ({
             <div className="flex flex-column">
               <div className="flex justify-content-between align-items-center mb-2">
                 <span className="font-semibold mr-6">DATE</span>
-                <span>{fonctions.dateFormatDMY(order.date)}</span>
+                <span>{fonctions.dateFormatYMDtoDMYFr(order.date)}</span>
+              </div>
+
+              <div className="flex justify-content-between align-items-center mb-2">
+                <span className="font-semibold mr-6">RENDEZ-VOUS</span>
+                <span>{order.rendez_vous}</span>
               </div>
               <div className="flex justify-content-between align-items-center mb-2">
                 <span className="font-semibold mr-6">NUMERO</span>
@@ -85,8 +91,8 @@ const Invoice = ({
               </tr>
             </thead>
             <tbody>
-              {order.orderProducts &&
-                order.orderProducts.map((product: Demo.OrderProduct, index) => (
+              {order.orderItems &&
+                order.orderItems.map((product: Demo.OrderItem, index) => (
                   <tr key={index}>
                     <td className="text-left py-3 border-bottom-1 surface-border white-space-nowrap">
                       {product.category +
@@ -129,7 +135,7 @@ const Invoice = ({
           <div className="flex flex-column">
             <div className="flex justify-content-between align-items-center mb-2">
               <span className="font-semibold mr-6">SOUS-TOTAL</span>
-              <span> {fonctions.formatCurrency(order.subTotal)}</span>
+              <span> {fonctions.formatCurrency(order.sub_total)}</span>
             </div>
             <div className="flex justify-content-between align-items-center mb-2">
               <span className="font-semibold mr-6">DISCOUNT</span>

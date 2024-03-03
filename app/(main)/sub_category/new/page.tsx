@@ -283,6 +283,11 @@ export default function Profile() {
     if (
       subCategory.code.trim() &&
       subCategory.category.trim() &&
+      subCategory.color.trim() &&
+      subCategory.size.trim() &&
+      subCategory.type.trim() &&
+      subCategory.sale_price > 0 &&
+      subCategory.alert_quantity > 0 &&
       subCategory.quantity > 0
     ) {
       setLoading(true);

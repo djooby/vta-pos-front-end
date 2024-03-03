@@ -1,5 +1,5 @@
 import fonctions from "@/utils/fonctions";
-import React, { RefObject, useRef } from "react";
+import React, { RefObject } from "react";
 
 interface MyComponentProps {
   printRef: RefObject<HTMLDivElement>;
@@ -51,7 +51,7 @@ const InvoiceToPrint: React.FC<MyComponentProps> = ({
                 <span className="font-semibold mr-1">DATE:</span>
                 <span>
                   {transfertInfo.date &&
-                    fonctions.dateFormatDMY(transfertInfo.date)}
+                    fonctions.dateFormatYMDtoDMYFr(transfertInfo.date)}
                 </span>
               </div>
             </div>

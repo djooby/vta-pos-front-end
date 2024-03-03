@@ -2,27 +2,18 @@
 import ClientPos from "@/components/client/client";
 import DialogClientList from "@/components/client/dialogClientList";
 import DialogNewClient from "@/components/client/dialogNewClient";
-import DialogOrderProduct from "@/components/order/dialogOrderProduct";
+import DialogOrderItem from "@/components/order/dialogOrderItem";
 import Order from "@/components/order/order";
 import CategoryList from "@/components/pos/categoriesList";
 import DialogCategoryProducts from "@/components/pos/dialogCategoryProducts";
 import { Demo } from "@/types";
 import fonctions from "@/utils/fonctions";
 import { Button } from "primereact/button";
-import { Toast } from "primereact/toast";
-import React, { useEffect, useRef, useState } from "react";
-const MainPage: React.FC = () => {
-  const toast = useRef<Toast | null>(null);
-  const toastMessage = (status: any, message: string) => {
-    var summary = status == "error" ? "Erreur!" : "Succès!";
+import { Calendar } from "primereact/calendar";
+import { Nullable } from "primereact/ts-helpers";
 
-    toast.current?.show({
-      severity: status,
-      summary: summary,
-      detail: message,
-      life: 3000,
-    });
-  };
+import React, { useEffect, useState } from "react";
+const MainPage: React.FC = () => {
   const [
     selectedCategory,
     setSelectedCategory,
@@ -34,8 +25,6 @@ const MainPage: React.FC = () => {
   };
 
   const cancelDialogCategoryProducts = () => {
-    // Traitement à effectuer lorsque l'utilisateur annule
-    console.log("Action annulée");
     setIsDialogCategoryProducts(false);
   };
 
@@ -53,49 +42,80 @@ const MainPage: React.FC = () => {
   const [isDialogCategoryProducts, setIsDialogCategoryProducts] = useState(
     false
   );
+
   const [subCategory, setSubCategory] = useState<Demo.SubCategory | null>(null);
 
   const handleProductSelect = (subCategory: Demo.SubCategory) => {
     setSubCategory(subCategory);
     setIsDialogCategoryProducts(false);
-    setIsDialogOrderProduct(true);
+    setIsDialogorderItem(true);
   };
 
   //!  =============== PRODUCT ORDER =======================
-  const [orderProducts, setOrderProducts] = useState<Demo.OrderProduct[]>([]);
-  const [orderProduct, setOrderProduct] = useState<Demo.OrderProduct>();
-  const [isDialogOrderProduct, setIsDialogOrderProduct] = useState<boolean>(
-    false
-  );
+  const [orderItems, setorderItems] = useState<Demo.OrderItem[]>([]);
+  const [isDialogorderItem, setIsDialogorderItem] = useState<boolean>(false);
 
-  const cancelDialogOrderProduct = () => {
+  const cancelDialogorderItem = () => {
     console.log("Action annulée");
-    setIsDialogOrderProduct(false);
+    setIsDialogorderItem(false);
   };
 
-  const handleProductOrder = (orderProduct: Demo.OrderProduct) => {
-    orderProduct.id_order_product = parseInt(fonctions.generateId(12));
-    orderProducts.push(orderProduct);
-    setOrder({ ...order, orderProducts: orderProducts });
-    setIsDialogOrderProduct(false);
+  const handleProductOrder = (orderItem: Demo.OrderItem) => {
+    orderItem.id_order_item = parseInt(fonctions.generateId(12));
+    orderItems.push(orderItem);
+    setOrder({ ...order, orderItems: orderItems });
+    setIsDialogorderItem(false);
   };
 
-  const removeProductOrder = (orderProduct: Demo.OrderProduct) => {
-    const index = orderProducts.indexOf(orderProduct);
+  const removeProductOrder = (orderItem: Demo.OrderItem) => {
+    const index = orderItems.indexOf(orderItem);
     if (index !== -1) {
-      orderProducts.splice(index, 1);
-      setOrder({ ...order, orderProducts: orderProducts });
+      orderItems.splice(index, 1);
+      setOrder({ ...order, orderItems: orderItems });
     }
   };
 
+  //! ===== RENDEZ-VOUS=================
+
+  let today = new Date();
+  let month = today.getMonth();
+  let year = today.getFullYear();
+  let prevMonth = month === 0 ? 11 : month - 1;
+  let prevYear = prevMonth === 11 ? year - 1 : year;
+  let nextMonth = month === 11 ? 0 : month + 1;
+  let nextYear = nextMonth === 0 ? year + 1 : year;
+
+  let minDate = new Date();
+
+  minDate.setMonth(month);
+  minDate.setFullYear(prevYear);
+
+  let maxDate = new Date();
+
+  maxDate.setMonth(nextMonth);
+  maxDate.setFullYear(nextYear);
+
+  const [date, setDate] = useState<Nullable<Date>>(null);
+
+  const onChangeDate = async (e: any) => {
+    const newDate = fonctions.convertDateToDMY(e as Date);
+    const rendez_vous = fonctions.dateFormatDMYToDMYFr(newDate);
+    setRendezVous(rendez_vous);
+    setOrder({ ...order, rendez_vous: rendez_vous });
+  };
+
+  const [rendezVous, setRendezVous] = useState<string>("");
+
   //! ==================== ORDER =========================
   let emptyOrder: Demo.Order = {
-    subTotal: 0,
+    sub_total: 0,
     discount: 0,
     total: 0,
     date: fonctions.getCurrentDate(),
     code: fonctions.generateId(6),
     status: "null",
+    origin: "Central",
+    rendez_vous: rendezVous,
   };
   const [order, setOrder] = useState<Demo.Order>(emptyOrder);
 
@@ -103,7 +123,7 @@ const MainPage: React.FC = () => {
     if (order !== null) {
       let somme_totale = 0;
       // Calcul de la somme totale
-      for (const element of orderProducts) {
+      for (const element of orderItems) {
         somme_totale += element.total;
       }
       let _total =
@@ -112,18 +132,18 @@ const MainPage: React.FC = () => {
       // Vérifier si les valeurs ont changé avant de mettre à jour l'état
       if (
         _total !== order.total ||
-        somme_totale !== order.subTotal ||
-        JSON.stringify(orderProducts) !== JSON.stringify(order.orderProducts)
+        somme_totale !== order.sub_total ||
+        JSON.stringify(orderItems) !== JSON.stringify(order.orderItems)
       ) {
         setOrder({
           ...order,
-          orderProducts: orderProducts,
+          orderItems: orderItems,
           total: _total,
-          subTotal: somme_totale,
+          sub_total: somme_totale,
         });
       }
     }
-  }, [order, orderProducts]);
+  }, [order, orderItems]);
 
   const handleDiscount = (discount: number) => {
     if (discount > 0) {
@@ -165,10 +185,10 @@ const MainPage: React.FC = () => {
 
   return (
     <div className="grid">
-      <div className="col-12 md:col-6">
+      <div className="col-12 md:col-4">
         <CategoryList onCategorySelect={handleCategorySelect} />
       </div>
-      <div className="col-12 md:col-6">
+      <div className="col-12 md:col-8">
         <div className=" card">
           <div className="flex align-items-center justify-content-between mb-3">
             <div className="text-900 text-xl font-semibold">Client</div>
@@ -185,8 +205,30 @@ const MainPage: React.FC = () => {
           <ClientPos client={client} />
         </div>
 
+        {/*! rendez-vous */}
+
+        <div className=" card">
+          <div className="flex align-items-center justify-content-between mb-3">
+            <div className="text-900 text-xl font-semibold">Rendez-vous</div>
+          </div>
+
+          <Calendar
+            id="rendez-vous"
+            dateFormat="yy-mm-dd"
+            className="w-full"
+            minDate={minDate}
+            showIcon
+            value={date}
+            onChange={(e) => {
+              setDate(e.value);
+              onChangeDate(e.value);
+            }}
+          />
+        </div>
+
         <Order
-          orderProducts={orderProducts}
+          orderItems={orderItems}
+          rendezVous={rendezVous}
           order={order}
           client={client}
           remove={removeProductOrder}
@@ -202,10 +244,10 @@ const MainPage: React.FC = () => {
         data={selectedCategory}
       />
 
-      <DialogOrderProduct
-        visible={isDialogOrderProduct}
+      <DialogOrderItem
+        visible={isDialogorderItem}
         title="Configuration commande"
-        onCancel={cancelDialogOrderProduct}
+        onCancel={cancelDialogorderItem}
         onConfirm={handleProductOrder}
         data={subCategory}
       />

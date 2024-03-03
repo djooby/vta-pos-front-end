@@ -31,11 +31,12 @@ export default function Order() {
   };
 
   const emptyOrder: Demo.Order = {
-    subTotal: 0,
+    sub_total: 0,
     discount: 0,
     total: 0,
     date: "",
     code: "",
+    origin: "",
   };
 
   const [loading, setLoading] = useState(false);
@@ -94,17 +95,31 @@ export default function Order() {
   const actionBodyTemplate = (rowData: Demo.Order) => {
     return (
       <>
-        <Button
-          icon="pi pi-arrow-right"
-          rounded
-          className="mb-2 mr-2"
-          type="button"
-          tooltip="Voir detail"
-          outlined
-          tooltipOptions={{ position: "top" }}
-          onClick={() => router.push("/order/overview/" + rowData.code)}
-        />
+        {(userInfo.role === "Super Admin" || userInfo.role === "Secretary") && (
+          <Button
+            icon="pi pi-info-circle"
+            rounded
+            className="mb-2 mr-2"
+            type="button"
+            tooltip="Voir detail"
+            outlined
+            tooltipOptions={{ position: "top" }}
+            onClick={() => router.push("/order/overview/" + rowData.code)}
+          />
+        )}
 
+        {(userInfo.role === "Super Admin" || userInfo.role === "User") && (
+          <Button
+            icon="pi pi-print"
+            rounded
+            className="mb-2 mr-2"
+            type="button"
+            tooltip="Travail à faire"
+            outlined
+            tooltipOptions={{ position: "top" }}
+            onClick={() => router.push("/order/task/" + rowData.code)}
+          />
+        )}
         {userInfo.role === "Super Admin" && (
           <Button
             icon="pi pi-trash"
@@ -198,6 +213,7 @@ export default function Order() {
       />
     </>
   );
+
   return (
     <>
       <div className="col-12">
@@ -237,33 +253,17 @@ export default function Order() {
             <Column field="code" header="Code" sortable />
             <Column field="" header="Client" sortable body={clientTemplate} />
             <Column field="date" header="Date" sortable />
-            <Column field="deliveryDate" header="Livraison" sortable />
-            <Column
-              field="total"
-              header="Total"
-              sortable
-              body={(rowData) => priceBodyTemplate(rowData.total)}
-            />
+            <Column field="delivery_date" header="Date Livraison" sortable />
+            <Column field="rendez_vous" header="Rendez-vous" sortable />
+            <Column field="status" header="Statut" sortable />
 
-            <Column
-              field="subTotal"
-              header="Sous-Total"
-              sortable
-              body={(rowData) => priceBodyTemplate(rowData.subTotal)}
-            />
-            <Column
-              field="discount"
-              header="Discount"
-              sortable
-              body={(rowData) => priceBodyTemplate(rowData.discount)}
-            />
             <Column field="created_by" header="Créé par" sortable />
             <Column
               header="Action"
               headerStyle={{
-                minWidth: "10rem",
+                minWidth: "12rem",
                 maxWidth: "16rem",
-                width: "10rem",
+                width: "12rem",
               }}
               body={actionBodyTemplate}
             />

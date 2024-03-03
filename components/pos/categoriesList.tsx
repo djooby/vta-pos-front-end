@@ -98,20 +98,22 @@ const CategoryList: React.FC<CategoryListProps> = ({ onCategorySelect }) => {
   };
 
   const dataViewHeader = (
-    <div className="flex flex-column md:flex-row md:justify-content-between gap-2">
+    <div className="flex flex-column md:flex-row md:justify-content-between gap-1">
       <Dropdown
         value={sortKey}
         options={sortOptions}
         optionLabel="label"
-        placeholder="Filtrer par quantité"
+        placeholder="Trier par quantité"
         onChange={onSortChange}
+        className="w-full"
       />
       <span className="p-input-icon-left">
         <i className="pi pi-search" />
         <InputText
           value={globalFilterValue}
           onChange={onFilter}
-          placeholder="Filtrer par nom"
+          placeholder="Trier par nom"
+          className="w-full"
         />
       </span>
     </div>
@@ -120,8 +122,8 @@ const CategoryList: React.FC<CategoryListProps> = ({ onCategorySelect }) => {
   const itemTemplate = (category: Demo.Category) => {
     return (
       <div className="col-6 lg:col-3">
-        <div className="card m-3 border-1 p-2 surface-border">
-          <div className="flex flex-wrap gap-2 align-items-center justify-content-end mb-2">
+        <div className="card m-2 border-1 p-2 surface-border">
+          <div className="flex flex-wrap gap-1 align-items-center justify-content-end mb-2">
             <span
               className={`product-badge status-${getInventoryStatus(
                 category.quantity
@@ -134,9 +136,10 @@ const CategoryList: React.FC<CategoryListProps> = ({ onCategorySelect }) => {
             <img
               src={category.image}
               alt={category.image}
-              className="w-9 shadow-2 my-3 mx-0"
+              className="w-9 shadow-2 my-0 mx-0"
             />
             <Button
+              size="small"
               text
               label={category.category_name}
               onClick={() => onCategorySelect(category)}

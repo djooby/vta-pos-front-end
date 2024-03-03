@@ -29,7 +29,7 @@ const Proforma = ({ order }: { order: Demo.Order }) => {
             <div className="flex flex-column">
               <div className="flex justify-content-between align-items-center mb-2">
                 <span className="font-semibold mr-6">DATE</span>
-                <span>{fonctions.dateFormatDMY(order.date)}</span>
+                <span>{fonctions.dateFormatYMDtoDMYFr(order.date)}</span>
               </div>
               <div className="flex justify-content-between align-items-center mb-2">
                 <span className="font-semibold mr-6">NUMERO</span>
@@ -71,8 +71,8 @@ const Proforma = ({ order }: { order: Demo.Order }) => {
               </tr>
             </thead>
             <tbody>
-              {order.orderProducts &&
-                order.orderProducts.map((product: Demo.OrderProduct, index) => (
+              {order.orderItems &&
+                order.orderItems.map((product: Demo.OrderItem, index) => (
                   <tr key={index}>
                     <td className="text-left py-3 border-bottom-1 surface-border white-space-nowrap">
                       {product.category +
@@ -106,7 +106,7 @@ const Proforma = ({ order }: { order: Demo.Order }) => {
           <div className="flex flex-column">
             <div className="flex justify-content-between align-items-center mb-2">
               <span className="font-semibold mr-6">SOUS-TOTAL</span>
-              <span> {fonctions.formatCurrency(order.subTotal)}</span>
+              <span> {fonctions.formatCurrency(order.sub_total)}</span>
             </div>
             <div className="flex justify-content-between align-items-center mb-2">
               <span className="font-semibold mr-6">DISCOUNT</span>
