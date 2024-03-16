@@ -3,7 +3,6 @@
 import ClientPos from "@/components/client/client";
 import { UserContext } from "@/layout/context/usercontext";
 import { Demo } from "@/types";
-import fonctions from "@/utils/fonctions";
 import axios from "axios";
 import { useRouter } from "next/navigation";
 import { FilterMatchMode } from "primereact/api";
@@ -29,6 +28,8 @@ export default function Order() {
       life: 3000,
     });
   };
+
+  const access_role = ["Super Admin", "Administrateur", "Secrétaire"];
 
   const emptyOrder: Demo.Order = {
     sub_total: 0,
@@ -95,7 +96,7 @@ export default function Order() {
   const actionBodyTemplate = (rowData: Demo.Order) => {
     return (
       <>
-        {(userInfo.role === "Super Admin" || userInfo.role === "Secretary") && (
+        {access_role.includes(userInfo.role) && (
           <Button
             icon="pi pi-info-circle"
             rounded
@@ -141,15 +142,6 @@ export default function Order() {
     return (
       <>
         <ClientPos client={rowData?.client as Demo.Client} />
-      </>
-    );
-  };
-
-  const priceBodyTemplate = (price: any) => {
-    return (
-      <>
-        <span className="p-column-title">Prix</span>
-        {fonctions.formatCurrency(price)}
       </>
     );
   };
@@ -258,6 +250,7 @@ export default function Order() {
             <Column field="status" header="Statut" sortable />
 
             <Column field="created_by" header="Créé par" sortable />
+
             <Column
               header="Action"
               headerStyle={{

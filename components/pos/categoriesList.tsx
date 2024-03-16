@@ -121,15 +121,15 @@ const CategoryList: React.FC<CategoryListProps> = ({ onCategorySelect }) => {
 
   const itemTemplate = (category: Demo.Category) => {
     return (
-      <div className="col-6 lg:col-3">
+      <div className="col-6 lg:col-4">
         <div className="card m-2 border-1 p-2 surface-border">
-          <div className="flex flex-wrap gap-1 align-items-center justify-content-end mb-2">
+          <div className="flex flex-wrap gap-1 align-items-center justify-content-center mb-2">
             <span
               className={`product-badge status-${getInventoryStatus(
                 category.quantity
-              ).toLowerCase()}`}
+              ).toLowerCase()} text-xs`}
             >
-              {category.quantity}
+              {getInventoryStatus(category.quantity)}
             </span>
           </div>
           <div className="flex flex-column align-items-center text-center mb-3">

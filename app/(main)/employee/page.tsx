@@ -116,7 +116,13 @@ export default function Employee() {
     );
   };
 
-  const role = ["Non définie", "User", "Secretary", "Admin"];
+  const role = [
+    "Non définie",
+    "Administrateur",
+    "Secrétaire",
+    "Technicien",
+    "Caissier",
+  ];
   const [submitted, setSubmitted] = useState(false);
 
   const onRowEditComplete = async (e: any) => {
@@ -132,7 +138,7 @@ export default function Employee() {
       newData.email === "" ||
       newData.phone === "" ||
       newData.poste === "" ||
-      newData.role === "" ||
+      !role.includes(newData.role) ||
       newData.address === ""
     ) {
       toastMessage("error", "Veuillez remplir tous les champs");

@@ -27,6 +27,5 @@ export const config = {
     "/order:path*",
     "/pos:path*",
     "/product:path*",
-    "/product:path*",
   ],
 };
