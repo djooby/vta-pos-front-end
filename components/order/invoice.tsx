@@ -94,10 +94,7 @@ const Invoice = ({
               {order.orderItems &&
                 order.orderItems.map((product: Demo.OrderItem, index) => (
                   <tr key={index}>
-                    <td
-                      className="text-left py-3 border-bottom-1 surface-border white-space-nowrapa"
-                      // style={{ width: "200px", maxWidth: "200px" }}
-                    >
+                    <td className="text-left py-3 border-bottom-1 surface-border white-space-nowrap">
                       {product.category}
                       <p className="text-xs">
                         {" " +

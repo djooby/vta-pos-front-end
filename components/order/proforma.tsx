@@ -75,13 +75,16 @@ const Proforma = ({ order }: { order: Demo.Order }) => {
                 order.orderItems.map((product: Demo.OrderItem, index) => (
                   <tr key={index}>
                     <td className="text-left py-3 border-bottom-1 surface-border white-space-nowrap">
-                      {product.category +
-                        " | " +
-                        product.size +
-                        " | " +
-                        product.color +
-                        " | " +
-                        product.type}
+                      {product.category}
+                      <p className="text-xs">
+                        {" " +
+                          product.size +
+                          " | " +
+                          product.color +
+                          " | " +
+                          product.type +
+                          ""}
+                      </p>
                     </td>
                     <td className="text-center py-3 border-bottom-1 surface-border px-3">
                       {product.service}
