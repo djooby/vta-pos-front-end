@@ -330,8 +330,6 @@ export default function OrderDetail({
                     label="Paiement"
                     outlined
                     onClick={() => setIsPaymentVisible(true)}
-                    placeholder="Rendez-vous"
-                    aria-label="Date rendez-vous"
                   />
                 )}
 

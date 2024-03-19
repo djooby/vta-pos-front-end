@@ -16,7 +16,8 @@ const AppMenu = () => {
 
   const model: MenuModel[] = [
     {
-      visible: role === "Super Admin" || role === "Admin" ? true : false,
+      visible:
+        role === "Super Admin" || role === "Administrateur" ? true : false,
       label: "Accueil",
       icon: "pi pi-home",
       items: [
@@ -30,7 +31,9 @@ const AppMenu = () => {
 
     {
       visible:
-        role === "Super Admin" || role === "Admin" || role === "Secretary"
+        role === "Super Admin" ||
+        role === "Administrateur" ||
+        role === "Secrétaire"
           ? true
           : false,
 
@@ -48,7 +51,9 @@ const AppMenu = () => {
 
     {
       visible:
-        role === "Super Admin" || role === "Admin" || role === "Secretary"
+        role === "Super Admin" ||
+        role === "Administrateur" ||
+        role === "Secrétaire"
           ? true
           : false,
 
@@ -116,7 +121,8 @@ const AppMenu = () => {
     },
 
     {
-      visible: role === "Super Admin" || role === "Admin" ? true : false,
+      visible:
+        role === "Super Admin" || role === "Administrateur" ? true : false,
       label: "Paramètre",
       icon: "pi pi-fw pi-cog",
       items: [
