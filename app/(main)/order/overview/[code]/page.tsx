@@ -13,7 +13,14 @@ import { Dropdown } from "primereact/dropdown";
 import { InputNumber } from "primereact/inputnumber";
 import { Toast } from "primereact/toast";
 import { classNames } from "primereact/utils";
-import { useCallback, useContext, useEffect, useRef, useState } from "react";
+import {
+  useCallback,
+  useContext,
+  useEffect,
+  useRef,
+  useState,
+  useTransition,
+} from "react";
 
 import { Nullable } from "primereact/ts-helpers";
 
@@ -205,6 +212,8 @@ export default function OrderDetail({
     setIsPaymentVisible(false);
   };
 
+  const [isPending, startTransition] = useTransition();
+
   const onSavePayment = async () => {
     setSubmitted(true);
     const dataApi = {
@@ -236,6 +245,49 @@ export default function OrderDetail({
         toastMessage("error", "Montant supérieur au solde de la commande");
       }
     }
+  };
+
+  const deletePayment = (id_payment: any) => {
+    startTransition(async () => {
+      const dataApi = {
+        token: userInfo.token,
+        id_payment: id_payment,
+      };
+      try {
+        await axios.post("/api/payment/delete", dataApi).then((res) => {
+          const result = res.data;
+          if (result.status === "success") {
+            toastMessage("success", result.data);
+            getPayments(order.id_order);
+            getOrder();
+          } else {
+            toastMessage("error", result.data);
+          }
+        });
+      } catch (e) {
+        console.log(e);
+        toastMessage("error", "Erreur lors de la suppression du paiement.");
+      }
+    });
+  };
+
+  const actionBodyTemplate = (rowData: any) => {
+    return (
+      <>
+        <Button
+          loading={isPending}
+          icon="pi pi-trash"
+          severity="danger"
+          rounded
+          outlined
+          className="mb-2"
+          type="button"
+          tooltip="Supprimer"
+          tooltipOptions={{ position: "top" }}
+          onClick={() => deletePayment(rowData.id_payment)}
+        />
+      </>
+    );
   };
 
   const footerPayment = (
@@ -365,6 +417,7 @@ export default function OrderDetail({
                   body={(rowData) => fonctions.formatCurrency(rowData.amount)}
                 />
                 <Column field="created_by" header="Par" sortable />
+                <Column body={actionBodyTemplate} />
               </DataTable>
             </div>
           </div>
