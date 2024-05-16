@@ -5,6 +5,7 @@ import { Demo } from "@/types";
 import { getColors } from "@/utils/colors";
 import fonctions from "@/utils/fonctions";
 import { getSizes } from "@/utils/size";
+import { getTypes } from "@/utils/type";
 import axios from "axios";
 import { Button } from "primereact/button";
 import { Divider } from "primereact/divider";
@@ -366,7 +367,7 @@ export default function Profile() {
                   onOtherInputChange(e.value, "type");
                 }}
                 optionLabel="label"
-                options={getColors()}
+                options={getTypes()}
                 placeholder="Choisir le type"
                 optionGroupLabel="label"
                 optionGroupChildren="items"
