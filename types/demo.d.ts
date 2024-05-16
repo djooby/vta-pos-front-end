@@ -275,4 +275,14 @@ declare namespace Demo {
     setId?: number;
     iconIdx?: number;
   };
+
+  interface GroupItem {
+    label: string;
+    value: string;
+  }
+  
+  interface GroupType {
+    label: string;
+    items: GroupItem[];
+  }
 }
